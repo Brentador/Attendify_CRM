@@ -31,3 +31,11 @@ jobs:
       run: |
         npx eslint . --fix
 
+    - name: Get Git commit hash
+      id: vars
+      run: echo "COMMIT_HASH=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
+    - name: Tag Docker image with commit hash
+      run: docker tag ${{ secrets.DOCKER_USERNAME }}/attendify_crm:latest ${{ secrets.DOCKER_USERNAME }}/attendify_crm:${{ env.COMMIT_HASH }}
+
+
