@@ -23,13 +23,14 @@ jobs:
 
     - name: Push Docker image
       run: docker push ${{ secrets.DOCKER_USERNAME }}/attendify_crm:latest
+      
     - name: Install ESLint
       run: |
             npm install eslint
 
     - name: Run ESLint
       run: |
-        npx eslint . --fix
+            npx eslint . --fix
 
     - name: Get Git commit hash
       id: vars
