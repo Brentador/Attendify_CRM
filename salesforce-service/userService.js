@@ -1,8 +1,8 @@
 const { getConnection } = require('./salesforce');
 
 class UserService {
-    static async createUser(){
-        try{
+    static async createUser() {
+        try {
             const conn = await getConnection();
             return await conn.sobject('Users_CRM__c').create({
                 email__c: 'test@gmail.com',
@@ -22,10 +22,11 @@ class UserService {
                 title__c: 'Mr',
                 updated_at__c: new Date().toISOString(),
             });
-        }catch (error){
+        } catch (error) {
             console.error('Error in creating user:', error);
             throw error;
         }
-    }}
+    }
+}
 
 module.exports = UserService;

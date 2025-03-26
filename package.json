@@ -16,6 +16,6 @@
   },
   "dependencies": {
     "dotenv": "^16.4.7",
-    "jsforce": "^3.6.6"
+    "jsforce": "^3.7.0"
   }
 }
