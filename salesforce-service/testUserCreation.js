@@ -1,13 +1,13 @@
 require('dotenv').config();
 const { getConnection } = require('./salesforce');
-const UserService = require('./userService');
+const createUser = require('./createUser');
 
 async function testCreateUser() {
     try {
         await getConnection();
         
         console.log('Starting user creation test...');
-        const result = await UserService.createUser();
+        const result = await createUser.createUser();
         console.log('Success:', result);
         
     } catch (error) {

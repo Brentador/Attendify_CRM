@@ -1,29 +1,26 @@
 const { getConnection } = require('./salesforce');
 
 class UserService {
-  // New method for deleting a user
-  static async deleteUser(userId) {
-    try {
-        const conn = await getConnection();
-        // Fetch the user to ensure it exists before attempting to delete
-        const result = await conn.sobject('Users_CRM__c')
-            .find({ Name: userId })
-            .execute();
+  static async deleteUser(email){
+    try{
+      const conn = await getConnection();
 
-        if (!result || result.length === 0) {
-            throw new Error('User not found');
-        }
+      const query = `SELECT Id FROM Users_CRM__c WHERE email__c = '${email}'`
+      const result = await conn.query(query);
 
-        const user = result[0];
+      if (result.records.length === 0){
+        console.log(`No user found with email: ${email}`)
+        return { success: false, message: 'User not found' }
+      }
 
-        // Perform delete
-        const deleteResult = await conn.sobject('Users_CRM__c').destroy(user.Id);
-        
-        // Return the result of the delete operation
-        return deleteResult;
-    } catch (error) {
-        console.error('Error in deleting user:', error);
-        throw error;
+      const userId = result.records[0].Id;
+
+      await conn.sobject('Users_CRM__c').destroy(userId);
+      console.log(`User with email ${email} deleted successfully.`);
+      return { success: true, message: 'User deleted successfully' };
+    }catch (error) {
+      console.error(`Error deleting user with email ${email}:`, error);
+      return { success: false, message: 'Error deleting user', error };
     }
   }
 }
