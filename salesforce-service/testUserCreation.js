@@ -7,7 +7,15 @@ async function testCreateUser() {
         await getConnection();
         
         console.log('Starting user creation test...');
-        const result = await createUser.createUser();
+        
+        const userData = {
+            email__c: 'newuser@gmail.com',
+            first_name__c: 'John',
+            last_name__c: 'Doe',
+            dob__c: '1990-01-01',
+        };
+        
+        const result = await createUser.createUser(userData);
         console.log('Success:', result);
         
     } catch (error) {

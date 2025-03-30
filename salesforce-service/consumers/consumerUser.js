@@ -1,7 +1,5 @@
 const amqp = require('amqplib');
-const create = require('../UserCRUD');
-const update = require('../UserCRUD');
-const UserService = require('../UserCRUD');
+const UserCRUD = require('../UserCRUD');
 const { parseStringPromise } = require('xml2js');
 
 async function startConsumer() {
@@ -50,11 +48,11 @@ async function startConsumer() {
                 };
 
                 if (operation === 'create') {
-                    await create.createUser(userData);
+                    await UserCRUD.createUser(userData);
                 } else if (operation === 'update') {
-                    await update.updateUser(userData);
+                    await UserCRUD.updateUser(userData);
                 } else if (operation === 'delete') {
-                    await UserService.deleteUser(userData.email__c);
+                    await UserCRUD.deleteUser(userData.email__c);
                 } else {
                     console.log('Invalid operation');
                 }
