@@ -1,11 +1,17 @@
 const { getConnection } = require('./salesforce');
 
 class UserService {
-  static async updateUser(userData) {
+  static async updateUser(userName, userToUpdate) {
     try {
+        if (!userName) {
+            throw new Error('User name is required to find the user.');
+        }
+
         const conn = await getConnection();
+        
+        // Fetch the user based on the provided Name (or unique identifier)
         const result = await conn.sobject('Users_CRM__c')
-            .find({ email__c: userData.email__c })
+            .find({ Name: userName })
             .execute();
         
         if (!result || result.length === 0) {
@@ -13,23 +19,11 @@ class UserService {
         }
         
         const user = result[0];
-
-        // const userToUpdate = {
-        //     Id: user.Id,
-        //     email__c: 'updatedemail@gmail.com',
-        //     first_name__c: 'Updated',
-        //     last_name__c: 'Name',
-        //     updated_at__c: new Date().toISOString(),
-        // };
-
-        const userToUpdate = { Id: user.Id };
-        for (const [key, value] of Object.entries(userData)) {
-            if (value !== null) {
-                userToUpdate[key] = value;
-            }
-        }
-
-        // Perform update, only passing the fields you want to update
+        
+        // Ensure the object has the required ID field for update
+        userToUpdate.Id = user.Id;
+        
+        // Perform update
         return await conn.sobject('Users_CRM__c').update(userToUpdate);
     } catch (error) {
         console.error('Error in updating user:', error);
