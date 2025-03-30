@@ -1,6 +1,6 @@
 require('dotenv').config();
 const { getConnection } = require('./salesforce');
-const createUser = require('./createUser');
+const createUser = require('./UserCRUD');
 
 async function testCreateUser() {
     try {

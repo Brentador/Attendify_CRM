@@ -1,6 +1,6 @@
 require('dotenv').config();
 const { getConnection } = require('./salesforce');
-const UserService = require('./updateUser');
+const UserService = require('./UserCRUD');
 
 async function testUpdateUser() {
     try {

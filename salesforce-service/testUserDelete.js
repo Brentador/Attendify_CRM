@@ -1,6 +1,6 @@
 require('dotenv').config();
 const { getConnection } = require('./salesforce');
-const UserService = require('./deleteUser');  // Assuming updateUser.js contains deleteUser function
+const UserService = require('./UserCRUD');  // Assuming updateUser.js contains deleteUser function
 
 async function testDeleteUser(userId) {
     try {
