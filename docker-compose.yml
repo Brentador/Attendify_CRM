@@ -3,13 +3,13 @@ networks:
     external: true
 
 services:
-  attendify_crm:
+  attendify_crm_consumers:
     build:
       context: .
-      dockerfile: Dockerfile
-    # restart: always
-    ports:
-      - "3000:3000"
+      dockerfile: Dockerfile.consumers
+    command: node indexConsumers.js
+    # ports:
+    #   - "3000:3000"
     volumes:
       - .:/app
     networks:
@@ -17,3 +17,16 @@ services:
     env_file:
       - .env
     
+  attendify_crm_producers:
+    build:
+      context: .
+      dockerfile: Dockerfile.producers
+    command: node indexProducers.js
+    # ports:
+    #   - "3001:3001"
+    volumes:
+      - .:/app
+    networks:
+      - attendify_net
+    env_file:
+      - .env

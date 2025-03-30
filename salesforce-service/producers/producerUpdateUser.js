@@ -48,9 +48,13 @@ async function checkUpdatedUsers(){
                 const builder = new Builder();
                 if (users.length > 0) {
                     for(const user of users){
+                        if (user.LastModifiedDate !== user.CreatedDate){
                         const mappedUserXML = mapXML(user);
                         const message = builder.buildObject(mappedUserXML);
                         channel.publish("user-management", "user.update", Buffer.from(message));
+                    } else {
+                        console.log(`Skipping user ${user.Id} as it was just created.`);
+                    }
                     }
                 }
 
