@@ -12,7 +12,6 @@ class UserService {
             city__c: userData.city__c,
             company_id__c: userData.company_id__c,
             country__c: userData.country__c,
-            created_at__c: new Date().toISOString(),
             dob__c: userData.dob__c,
             email_registered__c: userData.email_registered__c,
             house_number__c: userData.house_number__c,
@@ -20,7 +19,6 @@ class UserService {
             province__c: userData.province__c,
             street_name__c: userData.street_name__c,
             title__c: userData.title__c,
-            updated_at__c: new Date().toISOString(),
             created_by_crm_ui__c: 0,
         });
       } catch (error) {

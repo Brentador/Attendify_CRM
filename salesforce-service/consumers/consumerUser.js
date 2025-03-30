@@ -47,14 +47,16 @@ async function startConsumer() {
                         title__c: user.title,
                 };
 
-                if (operation === 'create') {
-                    await UserCRUD.createUser(userData);
-                } else if (operation === 'update') {
-                    await UserCRUD.updateUser(userData);
-                } else if (operation === 'delete') {
-                    await UserCRUD.deleteUser(userData.email__c);
-                } else {
-                    console.log('Invalid operation');
+                if(parsedData.attendify.info.sender.toLowerCase() != "crm"){
+                    if (operation === 'create') {
+                        await UserCRUD.createUser(userData);
+                    } else if (operation === 'update') {
+                        await UserCRUD.updateUser(userData);
+                    } else if (operation === 'delete') {
+                        await UserCRUD.deleteUser(userData.email__c);
+                    } else {
+                        console.log('Invalid operation');
+                    }
                 }
 
                 //acknowledge message

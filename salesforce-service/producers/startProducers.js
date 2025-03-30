@@ -1,6 +1,6 @@
-const createdUser = requires('./producerCreateUser');
-const updatedUser = requires('./producerUpdateUser');
-const deletedUser = requires('./producerDeleteUser');
+const createdUser = require('./producerCreateUser');
+const updatedUser = require('./producerUpdateUser');
+const deletedUser = require('./producerDeleteUser');
 
 async function startProducers(){
     try {
