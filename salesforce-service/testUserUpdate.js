@@ -8,12 +8,12 @@ async function testUpdateUser() {
         
         console.log('Starting user update test...');
         
-        const userName = '36';  // Identifier to find the user
+        const userName = '34';  // Identifier to find the user
         
         const userToUpdate = {
-            email__c: 'updatedemail@gmail.com',
-            first_name__c: 'Ben',
-            last_name__c: 'Dover',
+            email__c: 'test@gmail.com',
+            first_name__c: 'Test',
+            last_name__c: 'Icle',
             updated_at__c: new Date().toISOString(),
         };
         
