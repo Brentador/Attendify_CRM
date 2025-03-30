@@ -1,7 +1,7 @@
 const amqp = require('amqplib');
-const create = require('../createUser');
-const update = require('../updateUser');
-const UserService = require('../deleteUser');
+const create = require('../UserCRUD');
+const update = require('../UserCRUD');
+const UserService = require('../UserCRUD');
 const { parseStringPromise } = require('xml2js');
 
 async function startConsumer() {
