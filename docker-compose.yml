@@ -9,7 +9,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.consumers
-    command: node indexConsumers.js
     volumes:
       - .:/app
     networks:
@@ -22,7 +21,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.producers
-    command: node indexProducers.js
     volumes:
       - .:/app
     networks:
