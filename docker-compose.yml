@@ -5,13 +5,11 @@ networks:
 
 
 services:
-  consumers:
+  crm_consumers:
     build:
       context: .
       dockerfile: Dockerfile.consumers
     command: node indexConsumers.js
-    # ports:
-    #   - "3000:3000"
     volumes:
       - .:/app
     networks:
@@ -20,13 +18,11 @@ services:
       - .env
 
     
-  producers:
+  crm_producers:
     build:
       context: .
       dockerfile: Dockerfile.producers
     command: node indexProducers.js
-    # ports:
-    #   - "3001:3001"
     volumes:
       - .:/app
     networks:

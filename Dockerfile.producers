@@ -6,5 +6,4 @@ COPY indexProducers.js .env ./
 RUN mkdir -p salesforce-service/producers
 COPY ./salesforce-service/salesforce.js ./salesforce-service/heartbeat.js ./salesforce-service
 COPY ./salesforce-service/producers ./salesforce-service/producers
-# EXPOSE 3001
 CMD ["npm", "produce"]

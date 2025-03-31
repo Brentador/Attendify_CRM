@@ -6,5 +6,4 @@ COPY indexConsumers.js .env ./
 RUN mkdir -p salesforce-service/consumers
 COPY salesforce-service/UserCRUD.js salesforce-service/salesforce.js ./salesforce-service/heartbeat.js ./salesforce-service
 COPY salesforce-service/consumers ./salesforce-service/consumers
-# EXPOSE 3000
 CMD ["npm", "consume"]
