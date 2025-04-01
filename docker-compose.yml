@@ -1,16 +1,12 @@
 networks:
   attendify_net:
-    driver: bridge
-
-
+    external: true
 
 services:
   crm_consumers:
     build:
       context: .
       dockerfile: Dockerfile.consumers
-    volumes:
-      - .:/app
     networks:
       - attendify_net
     env_file:
@@ -21,8 +17,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.producers
-    volumes:
-      - .:/app
     networks:
       - attendify_net
     env_file:
