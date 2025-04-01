@@ -38,6 +38,7 @@ class UserService {
           if (result) {
               const user = result[0];
               const userToUpdate = { Id: user.Id };
+              userToUpdate.updated_by_api__c = true;
               for (const [key, value] of Object.entries(userData)) {
                 if (value !== null) {
                     userToUpdate[key] = value;
@@ -55,7 +56,6 @@ class UserService {
     static async deleteUser(email){
       try{
         const conn = await getConnection();
-  
         const query = `SELECT Id FROM Users_CRM__c WHERE email__c = '${email}'`
         const result = await conn.query(query);
   
@@ -65,7 +65,7 @@ class UserService {
         }
   
         const userId = result.records[0].Id;
-  
+        await conn.sobject('Users_CRM__c').update({ Id: userId, deleted_by_api__c: true});
         await conn.sobject('Users_CRM__c').destroy(userId);
         console.log(`User with email ${email} deleted successfully.`);
         return { success: true, message: 'User deleted successfully' };

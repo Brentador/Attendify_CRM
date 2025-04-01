@@ -57,6 +57,8 @@ async function startConsumer() {
                     } else {
                         console.log('Invalid operation');
                     }
+                } else {
+                    console.log("Sender is crm")
                 }
 
                 //acknowledge message

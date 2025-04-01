@@ -45,7 +45,7 @@ async function checkDeletedUsers(){
                 console.log("checking deleted users");
 
                 const query = `
-                    SELECT Name, Email__c, deleted_date__c 
+                    SELECT Name, Email__c, deleted_date__c, deletion_method__c 
                     FROM Tombstone__c 
                     WHERE Deleted_Date__c > ${SfDate.toDateTimeLiteral(lastCheckTime)}
                     ORDER BY deleted_date__c DESC 
@@ -59,12 +59,16 @@ async function checkDeletedUsers(){
 
                 for (const user of deletedUsers) {
                     const email = user.email__c
+                    if(user.deletion_method__c === 'UI'){
                     console.log(`User deleted: ${email}`);
                     const builder = new Builder();
                     const mappedUserXML = mapXML({ email__c: email });
                     const message = builder.buildObject(mappedUserXML);
                     channel.publish("user-management", "user.delete", Buffer.from(message));
                     console.log(`Message sent for deleted user: ${email}`);
+                    } else {
+                        console.log('Skipping API-deleted user: ${email}');
+                    }
                 }
 
                 lastCheckTime = new Date();
