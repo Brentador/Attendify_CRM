@@ -13,7 +13,6 @@ class UserService {
             company_id__c: userData.company_id__c,
             country__c: userData.country__c,
             dob__c: userData.dob__c,
-            email_registered__c: userData.email_registered__c,
             house_number__c: userData.house_number__c,
             phone__c: userData.phone__c,
             province__c: userData.province__c,
