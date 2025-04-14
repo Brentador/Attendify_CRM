@@ -9,34 +9,51 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Log in to Docker Hub
-      uses: docker/login-action@v3
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Build Docker image
-      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/attendify_crm:latest .
+      # Build & Push Producers Image
+      - name: Build Producers Image
+        run: |
+          docker build \
+            -t ${{ secrets.DOCKER_USERNAME }}/attendify_crm-producers:latest \
+            -f Dockerfile.producers .
+          docker push ${{ secrets.DOCKER_USERNAME }}/attendify_crm-producers:latest
 
-    - name: Push Docker image
-      run: docker push ${{ secrets.DOCKER_USERNAME }}/attendify_crm:latest
-      
-    - name: Install ESLint
-      run: |
-            npm install eslint
+      # Build & Push Consumers Image
+      - name: Build Consumers Image
+        run: |
+          docker build \
+            -t ${{ secrets.DOCKER_USERNAME }}/attendify_crm-consumers:latest \
+            -f Dockerfile.consumers .
+          docker push ${{ secrets.DOCKER_USERNAME }}/attendify_crm-consumers:latest
 
-    - name: Run ESLint
-      run: |
-            npx eslint . --fix
+      # Optional: Tag with Git commit hash
+      - name: Get Git commit hash
+        id: vars
+        run: echo "COMMIT_HASH=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
 
-    - name: Get Git commit hash
-      id: vars
-      run: echo "COMMIT_HASH=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+      - name: Tag Producers Image with Commit Hash
+        run: |
+          docker tag ${{ secrets.DOCKER_USERNAME }}/attendify_crm-producers:latest \
+            ${{ secrets.DOCKER_USERNAME }}/attendify_crm-producers:${{ env.COMMIT_HASH }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/attendify_crm-producers:${{ env.COMMIT_HASH }}
 
-    - name: Tag Docker image with commit hash
-      run: docker tag ${{ secrets.DOCKER_USERNAME }}/attendify_crm:latest ${{ secrets.DOCKER_USERNAME }}/attendify_crm:${{ env.COMMIT_HASH }}
+      - name: Tag Consumers Image with Commit Hash
+        run: |
+          docker tag ${{ secrets.DOCKER_USERNAME }}/attendify_crm-consumers:latest \
+            ${{ secrets.DOCKER_USERNAME }}/attendify_crm-consumers:${{ env.COMMIT_HASH }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/attendify_crm-consumers:${{ env.COMMIT_HASH }}
 
+      # Linting (optional)
+      - name: Install ESLint
+        run: npm install eslint
 
+      - name: Run ESLint
+        run: npx eslint . --fix
