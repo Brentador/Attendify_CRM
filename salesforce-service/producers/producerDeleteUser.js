@@ -37,7 +37,7 @@ async function checkDeletedUsers(){
         const channel = await connection.createChannel();
 
         let lastCheckTime = getLastCheckTime();
-        let previousUsers = new Set();
+        //let previousUsers = new Set();
 
 
         setInterval(async () => {
