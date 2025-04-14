@@ -2,7 +2,7 @@ FROM node:18-alpine
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
-COPY indexProducers.js .env ./
+COPY indexProducers.js ./
 RUN mkdir -p salesforce-service/producers
 COPY ./salesforce-service/salesforce.js ./salesforce-service/heartbeat.js ./salesforce-service
 COPY ./salesforce-service/producers ./salesforce-service/producers
