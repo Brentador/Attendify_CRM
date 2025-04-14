@@ -2,7 +2,7 @@ FROM node:18-alpine
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
-COPY indexConsumers.js .env ./
+COPY indexConsumers.js ./
 RUN mkdir -p salesforce-service/consumers
 COPY salesforce-service/UserCRUD.js salesforce-service/salesforce.js ./salesforce-service/heartbeat.js ./salesforce-service
 COPY salesforce-service/consumers ./salesforce-service/consumers
