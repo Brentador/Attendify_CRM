@@ -1,44 +1,10 @@
 const amqp = require('amqplib');
 const { Builder } = require('xml2js');
 const { getConnection } = require('../salesforce');
-const fs = require('fs');
-const { SfDate } = require('jsforce');
-const path = require('path');
 const bcrypt = require("bcryptjs");
+const Faye = require('faye');
 
 function startProducer() { console.log("Starting producer"); checkUsers(); }
-
-const lastCheckfilePath = path.join(__dirname, 'lastCheck.txt');
-
-function getLastChecktime() {
-    try {
-        if (fs.existsSync(lastCheckfilePath)) {
-            const lastCheckTime = fs.readFileSync(lastCheckfilePath, 'utf8').trim();
-            return new Date(lastCheckTime);
-        }
-    } catch (error) {
-        console.error('Error reading last check time:', error);
-    }
-    console.log('No valid last check time found. Defaulting to current time.');
-    return new Date();
-}
-
-async function saveLastCheckTime(time) {
-    let cb = (err) => {
-        if (err) {
-            console.error('Error saving last check time:', err);
-        } else {
-            console.log('Last check time saved successfully.');
-            console.log(fs.readFileSync(lastCheckfilePath, 'utf8'));
-            console.log(lastCheckfilePath);
-        }
-    }
-    try {
-        fs.writeFile(lastCheckfilePath, time.toISOString(), cb);
-    } catch (error) {
-        console.error('Error saving last check time:', error);
-    }
-}
 
 async function checkUsers() {
     console.log('Checking users...');
@@ -46,36 +12,31 @@ async function checkUsers() {
         const conn = await getConnection();
         const connection = await amqp.connect(process.env.RABBITMQ_URL);
         const channel = await connection.createChannel();
+        const instanceUrl = conn.instanceUrl;
+        const accessToken = conn.accessToken;
 
-        let lastCheckTime = getLastChecktime();
+        const client = new Faye.Client(`${instanceUrl}/cometd/58.0`, {
+            timeout: 60,
+            retry: 5,
+        });
 
-        setInterval(async () => {
-            try {
-                const currentTime = new Date();
-                const users = await conn.sobject('Users_CRM__c').find({ CreatedDate: { $gte: SfDate.toDateTimeLiteral(lastCheckTime), $lt: SfDate.toDateTimeLiteral(currentTime) } }).execute();
-                console.log(`Fetched ${users.length} users since last check.`);
+        client.setHeader('Authorization', `Bearer ${accessToken}`);
 
+        const subscription = client.subscribe('/event/created_producer__e', async (message) => {
+            console.log('Received created user message:', message);
 
+            const user = message.payload;
+            console.log(`User created: ${user.email__c}`);
+            const builder = new Builder();
+            const plainTextPassword = generateString(12);
+            const hashedPassword = await createPassword(plainTextPassword);
+            const userMessage = builder.buildObject(mapXML(user, hashedPassword));
+            const mailMessage = builder.buildObject(mailXML(user, plainTextPassword));
+            channel.publish("user-management", "user.register", Buffer.from(userMessage));
+            channel.publish("user-management", "user.passwordGenerated", Buffer.from(mailMessage));
+            console.log(`Message sent for new user: ${user}`);
 
-                const filteredUsers = users.filter((user) => user.created_by_crm_ui__c == 1);
-
-                console.log("sending message to RabbitMQ...")
-                const builder = new Builder();
-                for (const user of filteredUsers) {
-                    const plainTextPassword = generateString(12);
-                    const hashedPassword = await createPassword(plainTextPassword);
-
-                    const message = builder.buildObject(mapXML(user, hashedPassword));
-                    const mailMessage = builder.buildObject(mailXML(user, plainTextPassword));
-                    channel.publish("user-management", "user.register", Buffer.from(message));
-                    channel.publish("user-management", "user.passwordGenerated", Buffer.from(mailMessage));
-                }
-                lastCheckTime = currentTime;
-                await saveLastCheckTime(lastCheckTime);
-            } catch (error) {
-                console.error('Error fetching users or sending users:', error);
-            }
-        }, 5000);
+        })
     } catch (error) {
         console.error('Error in producer:', error);
     }
