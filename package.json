@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "consume": "node indexConsumers.js",
+    "produce": "node indexProducers.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -15,7 +17,10 @@
     "globals": "^16.0.0"
   },
   "dependencies": {
+    "amqplib": "^0.10.5",
+    "bcryptjs": "^3.0.2",
     "dotenv": "^16.4.7",
-    "jsforce": "^3.7.0"
+    "jsforce": "^3.7.0",
+    "xml2js": "^0.6.2"
   }
 }

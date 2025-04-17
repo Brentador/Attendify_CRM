@@ -1,0 +1,23 @@
+networks:
+  attendify_net:
+    external: true
+
+services:
+  crm_consumers:
+    build:
+      context: .
+      dockerfile: Dockerfile.consumers
+    networks:
+      - attendify_net
+    env_file:
+      - .env
+
+    
+  crm_producers:
+    build:
+      context: .
+      dockerfile: Dockerfile.producers
+    networks:
+      - attendify_net
+    env_file:
+      - .env

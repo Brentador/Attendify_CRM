@@ -1,11 +1,15 @@
 const jsforce = require('jsforce');
+
 const amqp = require('amqplib'); // require amqplib for RabbitMQ connection
 require('dotenv').config();
+
+require('dotenv').config({ path: '../.env' });
 
 let conn = null;
 const HEARTBEAT_INTERVAL = process.env.HEARTBEAT_INTERVAL || 3600; // 1 minutes
 
 async function getConnection() {
+
   if (!conn) {
     conn = new jsforce.Connection({
       loginUrl: process.env.SF_LOGIN_URL
@@ -15,12 +19,32 @@ async function getConnection() {
       process.env.SF_USERNAME,
       process.env.SF_PASSWORD + process.env.SF_SECURITY_TOKEN
     );
+
     
     // Start the heartbeat after successful login
     startHeartbeat();
   }
-  return conn;
-}
+  try {  
+    if (!conn || !conn.instanceUrl || !conn.accessToken) {
+          console.log('Creating new Salesforce connection...');
+          conn = new jsforce.Connection({
+              loginUrl: process.env.SF_LOGIN_URL,
+          });
+          await conn.login(
+              process.env.SF_USERNAME,
+              process.env.SF_PASSWORD + process.env.SF_SECURITY_TOKEN
+          );
+          console.log('Connected to Salesforce');
+      } else {
+          console.log('Reusing existing Salesforce connection...');
+      }
+      return conn;
+  } catch (error) {
+    console.error('Error connecting to Salesforce:', error);
+    conn = null;
+    throw error;
+  }
+} 
 
 function startHeartbeat() {
   setInterval(async () => {
