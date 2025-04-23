@@ -126,24 +126,7 @@ function mapXML(userXML, hashedPassword) {
     return mappedUserXML;
 }
 
-function mailXML(userXML, plainTextPassword) {
-    const mappedUserXML = {
-        attendify: {
-            info: {
-                sender: 'crm',
-                operation: 'create',
-            },
-            user: {
-                first_name: userXML.first_name__c,
-                last_name: userXML.last_name__c,
-                title: userXML.title__c,
-                email: userXML.email__c,
-                password: plainTextPassword,
-            }
-        }
-    }
-    return mappedUserXML;
-}
+
 
 
 module.exports = startProducer;
