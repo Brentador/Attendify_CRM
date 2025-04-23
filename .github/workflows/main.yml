@@ -12,6 +12,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Linting
       - name: Install ESLint
         run: npm install eslint
       - name: Run ESLint
