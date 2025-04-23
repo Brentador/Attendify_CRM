@@ -1,5 +1,5 @@
-const amqp = require('amqplib');
-const { Builder } = require('xml2js');
+// const amqp = require('amqplib');
+// const { Builder } = require('xml2js');
 const express = require('express');
 
 async function startHeartbeat(container) {

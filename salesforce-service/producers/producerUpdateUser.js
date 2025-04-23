@@ -19,7 +19,7 @@ async function checkUpdatedUsers() {
 
         client.setHeader('Authorization', `Bearer ${accessToken}`);
 
-        const subscription = client.subscribe('/event/updated_producer__e', async (message) => {
+        void client.subscribe('/event/updated_producer__e', async (message) => {
             const user = message.payload;
             if (user.LastModifiedDate !== user.CreatedDate) {
                 console.log('Received updated user message:', message);

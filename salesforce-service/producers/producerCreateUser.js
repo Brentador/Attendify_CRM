@@ -22,7 +22,7 @@ async function checkUsers() {
 
         client.setHeader('Authorization', `Bearer ${accessToken}`);
 
-        const subscription = client.subscribe('/event/created_producer__e', async (message) => {
+        void client.subscribe('/event/created_producer__e', async (message) => {
             console.log('Received created user message:', message);
 
             const user = message.payload;

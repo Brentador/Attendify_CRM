@@ -5,7 +5,7 @@ const startHeartbeat = require('./salesforce-service/heartbeat.js');
 async function startConsumers(){
     try {
         console.log('Starting consumers heartbeat');
-        startHeartbeat("CRM_Consumers");
+        void startHeartbeat("CRM_Consumers");
         console.log('Starting all consumers...');
         await startUserConsumer();
         console.log('All consumers started successfully.');
