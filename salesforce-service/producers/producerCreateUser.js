@@ -31,9 +31,7 @@ async function checkUsers() {
             const plainTextPassword = generateString(12);
             const hashedPassword = await createPassword(plainTextPassword);
             const userMessage = builder.buildObject(mapXML(user, hashedPassword));
-            const mailMessage = builder.buildObject(mailXML(user, plainTextPassword));
             channel.publish("user-management", "user.register", Buffer.from(userMessage));
-            channel.publish("user-management", "user.passwordGenerated", Buffer.from(mailMessage));
             console.log(`Message sent for new user: ${user}`);
 
         })
