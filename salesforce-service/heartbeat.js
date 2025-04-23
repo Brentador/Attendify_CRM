@@ -10,8 +10,6 @@ async function startHeartbeat(container) {
 
         console.log(`[Heartbeat] Connected to RabbitMQ for container: ${container}`);
 
-        let lastHeartbeatTimestamp = null;
-
         
         setInterval(async () => {
             try {
