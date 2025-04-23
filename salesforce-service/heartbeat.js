@@ -4,9 +4,9 @@ const express = require('express');
 
 async function startHeartbeat(container) {
     try {
-        const connection = await amqp.connect(process.env.RABBITMQ_URL);
-        const channel = await connection.createChannel();
-        const builder = new Builder();
+        //const connection = await amqp.connect(process.env.RABBITMQ_URL);
+        //const channel = await connection.createChannel();
+        //const builder = new Builder();
 
         console.log(`[Heartbeat] Connected to RabbitMQ for container: ${container}`);
 
