@@ -1,6 +1,6 @@
 const amqp = require('amqplib');
 const { Builder } = require('xml2js');
-
+const express = require('express');
 
 async function startHeartbeat(container) {
     try {
@@ -10,6 +10,26 @@ async function startHeartbeat(container) {
 
         console.log(`[Heartbeat] Connected to RabbitMQ for container: ${container}`);
 
+        // Express server opzetten voor het heartbeat endpoint
+        const app = express();
+        // Variabele om de laatste heartbeat timestamp op te slaan
+        let lastHeartbeatTimestamp = null;
+
+        app.get('/heartbeat', (req, res) => {
+            if (lastHeartbeatTimestamp) {
+                res.status(200).json({ status: 'UP', lastHeartbeat: lastHeartbeatTimestamp });
+            } else {
+                res.status(503).json({ status: 'Not active yet' });
+            }
+        });
+
+        const httpPort = process.env.HTTP_PORT || 30055;
+        app.listen(httpPort, () => {
+            console.log(`Heartbeat endpoint listening on port ${httpPort}`);
+        });
+
+        // Originele heartbeat code, uitgeschakeld via commentaar:
+        /*
         setInterval(async () => {
             try {
                 let heartbeatMessage = {
@@ -23,17 +43,20 @@ async function startHeartbeat(container) {
                 };
 
                 const message = builder.buildObject(heartbeatMessage);
-                channel.publish("monitoring", "monitoring.heartbeat", Buffer.from(message))
+                channel.publish("monitoring", "monitoring.heartbeat", Buffer.from(message));
+                lastHeartbeatTimestamp = new Date().toISOString();
                 console.log(`Sent heartbeat for container: ${container}`);
             } catch (error) {
-                console.log(`Error sending heartbeat: ${error}`)
+                console.log(`Error sending heartbeat: ${error}`);
             }
-        }, 1000)
+        }, 1000);
+        */
 
     } catch (error) {
         console.log(`Error connecting to RabbitMQ: ${error}`);
     }
 }
 
-
 module.exports = startHeartbeat;
+
+
