@@ -24,7 +24,7 @@ jobs:
 
       - name: tests
         run: echo "Running tests..."
-        # run: npm test
+        # run: npm tests
       
   build-and-deploy:
     needs: build
