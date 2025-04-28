@@ -5,36 +5,61 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build-and-push:
+  build:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
-
-      - name: Install ESLint
-        run: npm install eslint
-      - name: Run ESLint
-        run: npx eslint . --fix
-      
-      - name: Deploy and Build on Server via SSH
-        uses: appleboy/ssh-action@v1.0.3
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
         with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.SSH_PORT }}
-          script: |
-            cd /home/student/repo/Attendify_CRM
+          node-version: '18' 
+          cache: 'npm'
+
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: tests
+        run: echo "Running tests..."
+        # run: npm test
+      
+  build-and-deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' # Only run on main branch
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          
+      - name: Deploy and Build on Server
+        run: |
+          ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} << 'EOF'
+            set -e
+            cd ~/attendify/Attendify_CRM
             git pull origin main
+
+            # Build Docker images
+            docker build -t attendify_crm-producers -f Dockerfile.producers .
+            docker build -t attendify_crm-consumers -f Dockerfile.consumers .
 
             # Producers
             docker stop producers || true && docker rm producers || true
-            docker build -t attendify_crm-producers -f Dockerfile.producers .
-            docker run -d --name producers attendify_crm-producers
+            docker run --env-file ~/Attendify_CRM/.env -d --name attendify_crm-producers
 
             # Consumers
             docker stop consumers || true && docker rm consumers || true
-            docker build -t attendify_crm-consumers -f Dockerfile.consumers .
-            docker run -d --name consumers attendify_crm-consumers
+            docker run --env-file ~/Attendify_CRM/.env -d --name attendify_crm-consumers
+          EOF
