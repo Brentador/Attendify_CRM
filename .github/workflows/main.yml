@@ -48,7 +48,7 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} << 'EOF'
             set -e
-            cd ~/attendify/Attendify_CRM
+            cd ~/repo/Attendify_CRM
             git pull origin main
 
             # Build Docker images
