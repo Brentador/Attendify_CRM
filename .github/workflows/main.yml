@@ -57,9 +57,9 @@ jobs:
 
             # Producers
             docker stop producers || true && docker rm producers || true
-            docker run --env-file ~/Attendify_CRM/.env -d --name producers attendify_crm-producers
+            docker run --env-file ~/repo/Attendify_CRM/.env -d --name producers attendify_crm-producers
 
             # Consumers
             docker stop consumers || true && docker rm consumers || true
-            docker run --env-file ~/Attendify_CRM/.env -d --name consumers attendify_crm-consumers
+            docker run --env-file ~/repo/Attendify_CRM/.env -d --name consumers attendify_crm-consumers
           EOF
