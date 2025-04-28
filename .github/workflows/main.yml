@@ -46,7 +46,7 @@ jobs:
           
       - name: Deploy and Build on Server
         run: |
-          ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} << 'EOF'
+          ssh -o StrictHostKeyChecking=no -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} << 'EOF'
             set -e
             cd ~/attendify/Attendify_CRM
             git pull origin main
