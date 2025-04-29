@@ -1,9 +1,7 @@
 const createdUser = require('./producerCreateUser');
 const updatedUser = require('./producerUpdateUser');
 const deletedUser = require('./producerDeleteUser');
-const createdEvent = require('./producerCreateEvent');
-const updatedEvent = require('./producerUpdateEvent');
-const deletedEvent = require('./producerDeleteEvent');
+const startEventCDCProducer = require('./producerEventCDC');
 
 async function startProducers(){
     try {
@@ -11,9 +9,7 @@ async function startProducers(){
         await createdUser();
         await updatedUser();
         await deletedUser();
-        await createdEvent();
-        await updatedEvent();
-        await deletedEvent();
+        await startEventCDCProducer();
         console.log('All producers started successfully.');
     } catch (error) {
         console.error('Error starting producers:', error);
