@@ -51,7 +51,7 @@ function generateString(length) {
 }
 
 async function createPassword(randomString) {
-    const saltRounds = 12; // Cost factor (12 in your case)
+    const saltRounds = 12; 
 
     let hashedString = null;
     try {
