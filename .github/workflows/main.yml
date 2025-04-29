@@ -52,8 +52,8 @@ jobs:
             git pull origin main
 
             # Producers
-            docker compose up -d --env-file ~/attendify/test-environment/testing-CRM/Attendify_CRM/.env
+            docker compose up -d 
 
             # Consumers
-            docker compose up -d --env-file ~/attendify/test-environment/testing-CRM/Attendify_CRM/.env
+            docker compose up -d 
           EOF
