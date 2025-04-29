@@ -2,7 +2,7 @@ const amqp = require('amqplib');
 const { Builder } = require('xml2js');
 const { getConnection } = require('../salesforce'); // Salesforce connection
 const Faye = require('faye');
-require('dotenv').config({ path: '../.env' }); // Load .env
+
 
 const INTEGRATION_USER_USERNAME = 'project.2crm@gmail.com'; // Integratie user
 let integrationUserId = null; // Cache voor de ID van de integratie user
