@@ -51,6 +51,10 @@ jobs:
             cd ~/attendify/test-environment/testing-CRM/Attendify_CRM
             git pull origin main
 
+            # Build Docker images
+            docker build -t attendify_crm-producers -f Dockerfile.producers .
+            docker build -t attendify_crm-consumers -f Dockerfile.consumers .
+
             # Producers
             docker run --env-file ~/repo/Attendify_CRM/.env -d --name attendify_crm-producers
 
