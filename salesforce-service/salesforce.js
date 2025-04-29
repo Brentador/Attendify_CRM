@@ -22,7 +22,7 @@ async function getConnection() {
   } catch (error) {
     console.error('Error connecting to Salesforce:', error);
     conn = null;
-    throw error;
+    return;
   }
 } 
 

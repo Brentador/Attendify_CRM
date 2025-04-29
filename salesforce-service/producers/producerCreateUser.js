@@ -73,7 +73,7 @@ function mapXML(userXML, hashedPassword) {
                 operation: 'create',
             },
             user: {
-                // id: userXML.Id,
+                uid: userXML.uid__c,
                 first_name: userXML.first_name__c,
                 last_name: userXML.last_name__c,
                 // date_of_birth: userXML.dob__c,
