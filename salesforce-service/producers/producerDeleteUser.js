@@ -1,33 +1,7 @@
 const amqp = require('amqplib');
 const { getConnection } = require('../salesforce');
-const { SfDate } = require('jsforce');
-const fs = require('fs');
-const path = require('path');
 const { Builder } = require('xml2js');
-
-const lastCheckFilePath = path.join(__dirname, 'lastDeletedCheck.txt');
-
-function getLastCheckTime(){
-    try{
-        if (fs.existsSync(lastCheckFilePath)){
-            const lastCheckTime = fs.readFileSync(lastCheckFilePath, 'utf8').trim();
-            return new Date(lastCheckTime);
-        }
-    }catch(error){
-        console.error('Error reading last check time:', error);
-    }
-    console.log('No valid last check time found. Defaulting to current time.');
-    return new Date();
-}
-
-async function saveLastCheckTime(time){
-    try {
-        fs.writeFileSync(lastCheckFilePath, time.toISOString());
-        console.log('Last check time saved successfully.');
-    } catch (error) {
-        console.error('Error saving last check time:', error);
-    }
-}
+const Faye = require('faye');
 
 async function checkDeletedUsers(){
     console.log("checking deleted users");
@@ -35,45 +9,28 @@ async function checkDeletedUsers(){
         const conn = await getConnection();
         const connection = await amqp.connect(process.env.RABBITMQ_URL);
         const channel = await connection.createChannel();
+        const instanceUrl = conn.instanceUrl;
+        const accessToken = conn.accessToken;
 
-        let lastCheckTime = getLastCheckTime();
-        //let previousUsers = new Set();
+        const client = new Faye.Client(`${instanceUrl}/cometd/58.0`,{
+            timeout: 60,
+            retry: 5,
+        });
 
+        client.setHeader('Authorization', `Bearer ${accessToken}`);
 
-        setInterval(async () => {
-            try{
-                console.log("checking deleted users");
+        void client.subscribe('/event/deleted_user__e', async (message) =>{
+            console.log('Received message:', message);
 
-                const query = `
-                    SELECT Name, Email__c, deleted_date__c 
-                    FROM Tombstone__c 
-                    WHERE Deleted_Date__c > ${SfDate.toDateTimeLiteral(lastCheckTime)}
-                    ORDER BY deleted_date__c DESC 
-                `;
-                console.log(`Executing query: ${query}`);
-
-                const result = await conn.query(query);
-                const deletedUsers = result.records
-
-                console.log(`Fetched ${deletedUsers.length} deleted users.`);
-
-                for (const user of deletedUsers) {
-                    const email = user.email__c
-                    console.log(`User deleted: ${email}`);
-                    const builder = new Builder();
-                    const mappedUserXML = mapXML({ email__c: email });
-                    const message = builder.buildObject(mappedUserXML);
-                    channel.publish("user-management", "user.delete", Buffer.from(message));
-                    console.log(`Message sent for deleted user: ${email}`);
-                }
-
-                lastCheckTime = new Date();
-                saveLastCheckTime(lastCheckTime);
-            }catch (error) {
-                console.error('Error fetching deleted users:', error);
-            }
-        }, 5000);
-
+            const user = message.payload;
+            const email = user.email__c;
+            console.log(`User deleted: ${email}`);
+            const builder = new Builder();
+            const mappedUserXML = mapXML({ email__c: email });
+            const messageXML = builder.buildObject(mappedUserXML);
+            channel.publish("user-management", "user.delete", Buffer.from(messageXML));
+            console.log(`Message sent for deleted user: ${email}`);
+        })
     }catch (error) {
         console.error('Error in delete producer:', error);
     }

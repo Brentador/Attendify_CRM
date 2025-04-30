@@ -28,7 +28,7 @@ async function startHeartbeat(container) {
             } catch (error) {
                 console.log(`Error sending heartbeat: ${error}`)
             }
-        }, 1000)
+        }, 10000)
 
     } catch (error) {
         console.log(`Error connecting to RabbitMQ: ${error}`);

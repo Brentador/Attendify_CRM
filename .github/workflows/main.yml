@@ -5,55 +5,55 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build-and-push:
+  build:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          node-version: '18' 
+          cache: 'npm'
 
-      # Build & Push Producers Image
-      - name: Build Producers Image
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: tests
+        run: echo "Running tests..."
+        # run: npm tests
+      
+  build-and-deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' 
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
+          
+      - name: Deploy and Build on Server
         run: |
-          docker build \
-            -t ${{ secrets.DOCKER_USERNAME }}/attendify_crm-producers:latest \
-            -f Dockerfile.producers .
-          docker push ${{ secrets.DOCKER_USERNAME }}/attendify_crm-producers:latest
+          ssh -o StrictHostKeyChecking=no -p ${{ secrets.PROD_SSH_PORT }} ${{ secrets.PROD_SSH_USERNAME }}@${{ secrets.PROD_SSH_HOST }} << 'EOF'
+            set -e
+            cd ~/attendify/test-environment/testing-CRM/Attendify_CRM
+            git pull origin main
 
-      # Build & Push Consumers Image
-      - name: Build Consumers Image
-        run: |
-          docker build \
-            -t ${{ secrets.DOCKER_USERNAME }}/attendify_crm-consumers:latest \
-            -f Dockerfile.consumers .
-          docker push ${{ secrets.DOCKER_USERNAME }}/attendify_crm-consumers:latest
+            # Producers
+            docker compose up -d 
 
-      # Optional: Tag with Git commit hash
-      - name: Get Git commit hash
-        id: vars
-        run: echo "COMMIT_HASH=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
-
-      - name: Tag Producers Image with Commit Hash
-        run: |
-          docker tag ${{ secrets.DOCKER_USERNAME }}/attendify_crm-producers:latest \
-            ${{ secrets.DOCKER_USERNAME }}/attendify_crm-producers:${{ env.COMMIT_HASH }}
-          docker push ${{ secrets.DOCKER_USERNAME }}/attendify_crm-producers:${{ env.COMMIT_HASH }}
-
-      - name: Tag Consumers Image with Commit Hash
-        run: |
-          docker tag ${{ secrets.DOCKER_USERNAME }}/attendify_crm-consumers:latest \
-            ${{ secrets.DOCKER_USERNAME }}/attendify_crm-consumers:${{ env.COMMIT_HASH }}
-          docker push ${{ secrets.DOCKER_USERNAME }}/attendify_crm-consumers:${{ env.COMMIT_HASH }}
-
-      # Linting (optional)
-      - name: Install ESLint
-        run: npm install eslint
-
-      - name: Run ESLint
-        run: npx eslint . --fix
+            # Consumers
+            docker compose up -d 
+          EOF

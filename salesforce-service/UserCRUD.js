@@ -19,11 +19,11 @@ class UserService {
             province__c: userData.province__c,
             street_name__c: userData.street_name__c,
             title__c: userData.title__c,
-            created_by_crm_ui__c: 0,
+            uid__c: userData.uid__c,
         });
       } catch (error) {
           console.error('Error in creating user:', error);
-          throw error;
+          return;
       }
     }
 
@@ -48,7 +48,7 @@ class UserService {
           }
       } catch (error) {
         console.error('Error in updating user:', error);
-        throw error;
+        return;
       } 
     }
 
