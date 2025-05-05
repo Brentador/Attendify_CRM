@@ -6,7 +6,7 @@ async function startHeartbeat(container) {
     console.log(process.env.RABBITMQ_URL)
     try {
         const connection = await amqp.connect(process.env.RABBITMQ_URL);
-        const channel = await connection.createChannel();
+        // const channel = await connection.createChannel();
         const builder = new Builder();
 
         console.log(`[Heartbeat] Connected to RabbitMQ for container: ${container}`);
@@ -24,7 +24,7 @@ async function startHeartbeat(container) {
                 };
 
                 const message = builder.buildObject(heartbeatMessage);
-                channel.publish("monitoring", "monitoring.heartbeat", Buffer.from(message))
+                // channel.publish("monitoring", "monitoring.heartbeat", Buffer.from(message))
                 console.log(`Sent heartbeat for container: ${container}`);
             } catch (error) {
                 console.log(`Error sending heartbeat: ${error}`)
