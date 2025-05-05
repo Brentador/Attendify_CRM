@@ -1,7 +1,7 @@
 const amqp = require('amqplib');
 const UserCRUD = require('../UserCRUD');
 const { parseStringPromise } = require('xml2js');
-const connection = require('../rabbitmq.js');
+const connection = require('../rabbitmq');
 
 async function startConsumer() {
     console.log('Starting consumer...');

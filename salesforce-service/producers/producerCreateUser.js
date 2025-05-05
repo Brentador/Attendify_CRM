@@ -3,7 +3,7 @@ const { Builder } = require('xml2js');
 const { getConnection } = require('../salesforce');
 const bcrypt = require("bcryptjs");
 const Faye = require('faye');
-const connection = require('../rabbitmq.js');
+const connection = require('../rabbitmq');
 
 function startProducer() { console.log("Starting producer"); checkUsers(); }
 

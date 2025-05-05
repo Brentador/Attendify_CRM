@@ -2,7 +2,7 @@ const amqp = require('amqplib');
 const { getConnection } = require('../salesforce');
 const { Builder } = require('xml2js');
 const Faye = require('faye');
-const connection = require('../rabbitmq.js');
+const connection = require('../rabbitmq');
 
 
 async function checkDeletedUsers(){

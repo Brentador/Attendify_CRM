@@ -2,7 +2,7 @@ const amqp = require('amqplib');
 const { Builder } = require('xml2js');
 const { getConnection } = require('../salesforce');
 const Faye = require('faye');
-const connection = require('../rabbitmq.js');
+const connection = require('../rabbitmq');
 
 async function checkUpdatedUsers() {
     console.log("checking updated users");
