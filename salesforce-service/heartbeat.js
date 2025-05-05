@@ -1,5 +1,5 @@
 const { Builder } = require('xml2js');
-const connectRabbitmq = require('../rabbitmq');
+const connectRabbitmq = require('./rabbitmq');
 
 
 async function startHeartbeat(container) {
