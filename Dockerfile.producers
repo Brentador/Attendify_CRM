@@ -4,6 +4,6 @@ COPY package*.json ./
 RUN npm install
 COPY indexProducers.js ./
 RUN mkdir -p salesforce-service/producers
-COPY ./salesforce-service/salesforce.js ./salesforce-service/heartbeat.js ./salesforce-service
+COPY ./salesforce-service/salesforce.js ./salesforce-service/heartbeat.js ./salesforce-service ./salesforce-service/rabbitmq.js
 COPY ./salesforce-service/producers ./salesforce-service/producers
 CMD ["npm", "run", "produce"]
