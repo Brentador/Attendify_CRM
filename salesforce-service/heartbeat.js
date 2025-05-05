@@ -3,6 +3,7 @@ const { Builder } = require('xml2js');
 
 
 async function startHeartbeat(container) {
+    console.log(process.env.RABBITMQ_URL)
     try {
         const connection = await amqp.connect(process.env.RABBITMQ_URL);
         const channel = await connection.createChannel();
