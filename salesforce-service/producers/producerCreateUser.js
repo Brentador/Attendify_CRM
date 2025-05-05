@@ -3,6 +3,7 @@ const { Builder } = require('xml2js');
 const { getConnection } = require('../salesforce');
 const bcrypt = require("bcryptjs");
 const Faye = require('faye');
+const connection = require('../rabbitmq.js');
 
 function startProducer() { console.log("Starting producer"); checkUsers(); }
 
@@ -10,7 +11,6 @@ async function checkUsers() {
     console.log('Checking users...');
     try {
         const conn = await getConnection();
-        const connection = await amqp.connect(process.env.RABBITMQ_URL);
         const channel = await connection.createChannel();
         const instanceUrl = conn.instanceUrl;
         const accessToken = conn.accessToken;

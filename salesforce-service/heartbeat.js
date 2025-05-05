@@ -14,7 +14,7 @@ async function startHeartbeat(container) {
             vhost: 'attendify',
             frameMax: 131072,
         });
-        // const channel = await connection.createChannel();
+        const channel = await connection.createChannel();
         const builder = new Builder();
 
         console.log(`[Heartbeat] Connected to RabbitMQ for container: ${container}`);
@@ -32,7 +32,7 @@ async function startHeartbeat(container) {
                 };
 
                 const message = builder.buildObject(heartbeatMessage);
-                // channel.publish("monitoring", "monitoring.heartbeat", Buffer.from(message))
+                channel.publish("monitoring", "monitoring.heartbeat", Buffer.from(message))
                 console.log(`Sent heartbeat for container: ${container}`);
             } catch (error) {
                 console.log(`Error sending heartbeat: ${error}`)

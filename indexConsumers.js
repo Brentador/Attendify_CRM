@@ -7,7 +7,7 @@ async function startConsumersContainer(){
         console.log('Starting consumers heartbeat');
         await startHeartbeat("CRM_Consumers");
         console.log('Starting all consumers...');
-        // await startConsumers();
+        await startConsumers();
         console.log('All consumers started successfully.');
     } catch (error) {
         console.error('Error starting consumers:', error);

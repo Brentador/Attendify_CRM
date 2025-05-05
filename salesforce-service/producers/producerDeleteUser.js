@@ -2,12 +2,13 @@ const amqp = require('amqplib');
 const { getConnection } = require('../salesforce');
 const { Builder } = require('xml2js');
 const Faye = require('faye');
+const connection = require('../rabbitmq.js');
+
 
 async function checkDeletedUsers(){
     console.log("checking deleted users");
     try{
         const conn = await getConnection();
-        const connection = await amqp.connect(process.env.RABBITMQ_URL);
         const channel = await connection.createChannel();
         const instanceUrl = conn.instanceUrl;
         const accessToken = conn.accessToken;
