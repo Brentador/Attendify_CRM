@@ -9,9 +9,9 @@ async function startProducers(){
         console.log('Starting producers heartbeat');
         await startHeartbeat("CRM_Producers");
         console.log('Starting all producers...');
-        await createdUser();
-        await updatedUser();
-        await deletedUser();
+        // await createdUser();
+        // await updatedUser();
+        // await deletedUser();
         console.log('All producers started successfully.');
     } catch (error) {
         console.error('Error starting producers:', error);
