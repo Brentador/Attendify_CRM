@@ -51,9 +51,7 @@ jobs:
             cd ~/attendify/test-environment/testing-CRM/Attendify_CRM
             git pull origin main
 
-            # Producers
+            # start containers
             docker compose up -d 
 
-            # Consumers
-            docker compose up -d 
           EOF
