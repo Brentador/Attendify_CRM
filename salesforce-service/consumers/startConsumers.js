@@ -12,4 +12,5 @@ async function startConsumers(){
         console.error('Error starting consumers:', error);
     }
 }
-startConsumers();
+
+module.exports = startConsumers;

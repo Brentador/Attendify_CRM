@@ -1,20 +1,20 @@
 require('dotenv').config();
-const startProducersContainers = require('./salesforce-service/producers/startProducers.js');
+const startProducers = require('./salesforce-service/producers/startProducers.js');
 const startHeartbeat = require('./salesforce-service/heartbeat.js');
 
-async function startProducers(){
+async function startProducersContainers(){
     try {
         console.log('Starting producers heartbeat');
         await startHeartbeat("CRM_Producers");
         console.log('Starting all producers...');
-        await startProducersContainers();
+        await startProducers();
         console.log('All producers started successfully.');
     } catch (error) {
         console.error('Error starting producers:', error);
     }
 }
 
-startProducers();
+startProducersContainers();
 
 
 console.log('Salesforce service started');

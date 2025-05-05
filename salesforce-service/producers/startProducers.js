@@ -16,4 +16,4 @@ async function startProducers(){
     }
 }
 
-startProducers();
+module.exports = startProducers;
