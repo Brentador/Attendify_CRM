@@ -5,7 +5,15 @@ const { Builder } = require('xml2js');
 async function startHeartbeat(container) {
     console.log(process.env.RABBITMQ_URL)
     try {
-        const connection = await amqp.connect(process.env.RABBITMQ_URL);
+        const connection = await amqp.connect({
+            protocol: 'amqp',
+            hostname: 'rabbitmq',
+            port: 5672,
+            username: 'attendify',
+            password: process.env.RABBITMQ_PASSWORD,
+            vhost: 'attendify',
+            frameMax: 131072,
+        });
         // const channel = await connection.createChannel();
         const builder = new Builder();
 
