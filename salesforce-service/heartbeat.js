@@ -1,11 +1,11 @@
-const amqp = require('amqplib');
 const { Builder } = require('xml2js');
-const connection = require('../rabbitmq');
+const connectRabbitmq = require('../rabbitmq');
 
 
 async function startHeartbeat(container) {
     console.log(process.env.RABBITMQ_URL)
     try {
+        const connection = await connectRabbitmq();
         const channel = await connection.createChannel();
         const builder = new Builder();
 

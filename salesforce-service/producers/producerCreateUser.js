@@ -3,13 +3,14 @@ const { Builder } = require('xml2js');
 const { getConnection } = require('../salesforce');
 const bcrypt = require("bcryptjs");
 const Faye = require('faye');
-const connection = require('../rabbitmq');
+const connectRabbitmq = require('../rabbitmq');
 
 function startProducer() { console.log("Starting producer"); checkUsers(); }
 
 async function checkUsers() {
     console.log('Checking users...');
     try {
+        const connection = await connectRabbitmq();
         const conn = await getConnection();
         const channel = await connection.createChannel();
         const instanceUrl = conn.instanceUrl;

@@ -2,11 +2,12 @@ const amqp = require('amqplib');
 const { Builder } = require('xml2js');
 const { getConnection } = require('../salesforce');
 const Faye = require('faye');
-const connection = require('../rabbitmq');
+const connectRabbitmq = require('../rabbitmq');
 
 async function checkUpdatedUsers() {
     console.log("checking updated users");
     try {
+        const connection = await connectRabbitmq();
         const conn = await getConnection();
         const channel = await connection.createChannel();
         const instanceUrl = conn.instanceUrl;
