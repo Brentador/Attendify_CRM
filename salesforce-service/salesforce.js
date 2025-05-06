@@ -3,6 +3,10 @@ require('dotenv').config({ path: '../.env' });
 
 let conn = null;
 
+console.log("SF_USERNAME from env:", process.env.SF_USERNAME);
+console.log("SF_PASSWORD from env is set:", !!process.env.SF_PASSWORD); // Log of het gezet is, niet de waarde
+console.log("SF_SECURITY_TOKEN from env is set:", !!process.env.SF_SECURITY_TOKEN); 
+
 async function getConnection() {
   try {  
     if (!conn || !conn.instanceUrl || !conn.accessToken) {
