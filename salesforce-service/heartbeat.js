@@ -3,7 +3,6 @@ const connectRabbitmq = require('./rabbitmq');
 
 
 async function startHeartbeat(container) {
-    console.log(process.env.RABBITMQ_URL)
     try {
         const connection = await connectRabbitmq();
         const channel = await connection.createChannel();
@@ -14,12 +13,9 @@ async function startHeartbeat(container) {
         setInterval(async () => {
             try {
                 let heartbeatMessage = {
-                    attendify: {
-                        info: {
-                            sender: "CRM",
-                            container_name: container,
-                            timestamp: new Date().toISOString(),
-                        }
+                    heartbeat: {
+                        sender: "CRM",
+                        timestamp: Date.now(),
                     }
                 };
 
@@ -29,7 +25,7 @@ async function startHeartbeat(container) {
             } catch (error) {
                 console.log(`Error sending heartbeat: ${error}`)
             }
-        }, 10000)
+        }, 1000)
 
     } catch (error) {
         console.log(`Error connecting to RabbitMQ: ${error}`);
