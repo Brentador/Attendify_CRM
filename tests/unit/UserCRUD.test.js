@@ -1,7 +1,7 @@
-const UserCRUD = require('../salesforce-service/UserCRUD');
-const { getConnection } = require('../salesforce-service/salesforce');
+const UserCRUD = require('../../salesforce-service/UserCRUD');
+const { getConnection } = require('../../salesforce-service/salesforce');
 
-jest.mock('../salesforce-service/salesforce');
+jest.mock('../../salesforce-service/salesforce');
 
 beforeEach(() => {
     jest.clearAllMocks();
@@ -33,7 +33,7 @@ describe('UserCRUD.createUser', () => {
         expect(getConnection).toHaveBeenCalledTimes(1);
         expect(mockCreate).toHaveBeenCalledWith(userData);
         expect(result).toEqual({ id: '12345' });
-    })
+    });
     
     it('should handle errors gracefully', async () => {
         getConnection.mockRejectedValue(new Error('Salesforce Connection error'));
@@ -47,7 +47,7 @@ describe('UserCRUD.createUser', () => {
 
         const result = await UserCRUD.createUser(userData);
         expect(result).toBeUndefined();
-    })
+    });
 })
 
 describe('UserCRUD.updateUser', () => {
@@ -75,7 +75,7 @@ describe('UserCRUD.updateUser', () => {
         expect(mockUpdate).toHaveBeenCalledWith({ Id: '12345', ...userData });
         expect(result).toEqual({ success: true });
 
-    })
+    });
 
     it('should handle errors during find', async () => {
         const mockFind = jest.fn().mockImplementation(() => ({
@@ -117,5 +117,33 @@ describe('UserCRUD.updateUser', () => {
 })
 
 describe('UserCRUD.deleteUser', () => {
+    it('should delete a user', async () => {
+        const mockQuery = jest.fn().mockResolvedValue({ records: [{ Id: '12345' }] });
+        const mockDestroy = jest.fn().mockResolvedValue({ success: true });
+        getConnection.mockResolvedValue({
+            query: mockQuery,
+            sobject: () => ({
+                destroy: mockDestroy,
+            }),
+        })
+        
+        const result = await UserCRUD.deleteUser('test@example.com');
+        expect(getConnection).toHaveBeenCalledTimes(1);
+        expect(mockQuery).toHaveBeenCalledWith(`SELECT Id FROM Users_CRM__c WHERE email__c = 'test@example.com'`);
+        expect(mockDestroy).toHaveBeenCalledWith('12345');
+        expect(result).toEqual({ success: true, message: 'User deleted successfully' });
+    });
+
+    it('should handle user not found', async () => {
+        const mockQuery = jest.fn().mockResolvedValue({ records: [] });
+        getConnection.mockResolvedValue({
+            query: mockQuery,
+        });
+
+        const result = await UserCRUD.deleteUser('test@example.com');
+        expect(getConnection).toHaveBeenCalledTimes(1);
+        expect(mockQuery).toHaveBeenCalledWith(`SELECT Id FROM Users_CRM__c WHERE email__c = 'test@example.com'`);
+        expect(result).toEqual({ success: false, message: 'User not found' });
+    });
 
 })

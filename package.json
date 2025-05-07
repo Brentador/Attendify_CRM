@@ -6,7 +6,9 @@
   "scripts": {
     "consume": "node indexConsumers.js",
     "produce": "node indexProducers.js",
-    "test": "jest"
+    "test": "jest",
+    "test:unit": "jest --testPathPattern=tests/unit",
+    "test:integration": "jest --testPathPattern=tests/integration"
   },
   "keywords": [],
   "author": "",
