@@ -33,7 +33,6 @@ async function checkUsers() {
             const hashedPassword = await createPassword(plainTextPassword);
             const userMessage = builder.buildObject(mapXML(user, hashedPassword));
             channel.publish("user-management", "user.register", Buffer.from(userMessage));
-            console.log(`Message sent for new user: ${user}`);
 
         })
     } catch (error) {
@@ -57,9 +56,6 @@ async function createPassword(randomString) {
     let hashedString = null;
     try {
         hashedString = await bcrypt.hash(randomString, saltRounds);
-        //   const formattedHash = hashedString.replace("$2b$", "$2y$");
-        console.log(`Random String: ${randomString}`);
-        //   console.log(`Hashed (bcrypt): ${formattedHash}`);
     } catch (error) {
         console.error("Error hashing:", error);
     }

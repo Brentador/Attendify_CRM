@@ -1,25 +1,9 @@
 const amqp = require('amqplib');
 const startUserConsumer = require('../../salesforce-service/consumers/consumerUser');
 const UserCRUD = require('../../salesforce-service/UserCRUD');
-const { parseStringPromise } = require('xml2js');
-const {EventEmitter} = require('events');
-const { Builder } = require('xml2js');
-const { getConnection } = require('../../salesforce-service/salesforce');
-const bcrypt = require("bcryptjs");
-const Faye = require('faye');
-const connectRabbitmq = require('../../salesforce-service/rabbitmq');
-const e = require('express');
-const startProducer = require('../../salesforce-service/producers/producerCreateUser');
-const checkDeletedUsers = require('../../salesforce-service/producers/producerUpdateUser');
-const checkUpdatedUsers = require('../../salesforce-service/producers/producerDeleteUser');
 
-
-jest.mock('../../salesforce-service/salesforce');
-jest.mock('bcryptjs');
-jest.mock('faye');
 jest.mock('../../salesforce-service/UserCRUD');
 jest.mock('amqplib');
-
 
 describe('Consumer Tests', () => {
     let fakeChannel;
@@ -45,9 +29,8 @@ describe('Consumer Tests', () => {
 
     afterEach(() => {
         jest.clearAllMocks();
+        jest.spyOn(console, 'log').mockImplementation(() => {});
     });
-
-
 
 
     it('should create a user', async () => {
@@ -144,11 +127,22 @@ describe('Consumer Tests', () => {
         expect(UserCRUD.deleteUser).toHaveBeenCalledWith('delete@example.com');
         expect(fakeChannel.ack).toHaveBeenCalledWith(message);
     })
-})
 
+    it('should handle malformed XML gracefully', async () => {
+        const malformedXml = `<attendify><info><operation>create</operation></info>`; 
+    
+        const message = {
+            content: Buffer.from(malformedXml),
+        };
+        const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
-
-
-describe('Producer Tests', () => {
-
+        await consumeCallback(message);
+    
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+            'Error processing message:',
+            expect.any(Error)
+        );
+        expect(fakeChannel.ack).toHaveBeenCalledWith(message);
+        consoleErrorSpy.mockRestore();
+    })
 })
