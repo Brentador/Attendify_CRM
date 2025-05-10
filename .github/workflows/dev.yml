@@ -37,5 +37,5 @@ jobs:
           git checkout release
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
-          git merge origin/dev --no-ff --allow-unrelated-histories -m "Merge dev into release"
+          git merge origin/dev --strategy=recursive -X theirs -m "Merge dev into release"
           git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} release
