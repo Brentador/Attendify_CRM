@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: Main CI/CD Pipeline
 
 on:
   push:
@@ -21,10 +21,6 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
-
-      - name: tests
-        run: echo "Running tests..."
-        # run: npm tests
       
   build-and-deploy:
     needs: build

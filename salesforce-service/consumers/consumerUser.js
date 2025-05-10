@@ -21,6 +21,7 @@ async function startConsumer() {
         channel.consume(
             "crm.user",
             async (message) => {
+                try {
                 //get data from xml
                 const xmlData = message.content.toString();
                 const parsedData = await parseStringPromise(xmlData, { explicitArray: false });
@@ -60,9 +61,11 @@ async function startConsumer() {
                         console.log('Invalid operation');
                     }
                 }
-
-                //acknowledge message
+            } catch (error) {
+                console.error('Error processing message:', error);
+            } finally {
                 channel.ack(message);
+            }
             }
         )
     }catch(error){

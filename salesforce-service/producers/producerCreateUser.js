@@ -5,9 +5,8 @@ const bcrypt = require("bcryptjs");
 const Faye = require('faye');
 const connectRabbitmq = require('../rabbitmq');
 
-function startProducer() { console.log("Starting producer"); checkUsers(); }
 
-async function checkUsers() {
+async function checkCreatedUsers() {
     console.log('Checking users...');
     try {
         const connection = await connectRabbitmq();
@@ -22,20 +21,17 @@ async function checkUsers() {
         });
 
         client.setHeader('Authorization', `Bearer ${accessToken}`);
-
-        void client.subscribe('/event/created_producer__e', async (message) => {
-            console.log('Received created user message:', message);
-
-            const user = message.payload;
-            console.log(`User created: ${user.email__c}`);
-            const builder = new Builder();
-            const plainTextPassword = generateString(12);
-            const hashedPassword = await createPassword(plainTextPassword);
-            const userMessage = builder.buildObject(mapXML(user, hashedPassword));
-            channel.publish("user-management", "user.register", Buffer.from(userMessage));
-            console.log(`Message sent for new user: ${user}`);
-
-        })
+            void client.subscribe('/event/created_producer__e', (message) => {
+                console.log('Received created user message:', message);
+    
+                const user = message.payload;
+                console.log(`User created: ${user.email__c}`);
+                const builder = new Builder();
+                const plainTextPassword = generateString(12);
+                const hashedPassword = createPassword(plainTextPassword);
+                const userMessage = builder.buildObject(mapXML(user, hashedPassword));
+                channel.publish("user-management", "user.register", Buffer.from(userMessage));
+            });
     } catch (error) {
         console.error('Error in producer:', error);
     }
@@ -57,9 +53,6 @@ async function createPassword(randomString) {
     let hashedString = null;
     try {
         hashedString = await bcrypt.hash(randomString, saltRounds);
-        //   const formattedHash = hashedString.replace("$2b$", "$2y$");
-        console.log(`Random String: ${randomString}`);
-        //   console.log(`Hashed (bcrypt): ${formattedHash}`);
     } catch (error) {
         console.error("Error hashing:", error);
     }
@@ -130,4 +123,4 @@ function mapXML(userXML, hashedPassword) {
 
 
 
-module.exports = startProducer;
+module.exports = {checkCreatedUsers, createPassword};

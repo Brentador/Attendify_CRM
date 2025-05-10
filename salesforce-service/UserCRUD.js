@@ -45,6 +45,9 @@ class UserService {
               }
               return await conn.sobject('Users_CRM__c').update(userToUpdate);
             
+          } else {
+              console.log(`No user found with email: ${userData.email__c}`);
+              return { success: false, message: 'User not found' };
           }
       } catch (error) {
         console.error('Error in updating user:', error);
