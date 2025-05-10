@@ -29,7 +29,7 @@ jobs:
         run: npm run test:unit
 
       - name: Push to release branch
-        if: sucess()
+        if: success()
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
