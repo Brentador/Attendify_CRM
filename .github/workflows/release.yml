@@ -35,5 +35,5 @@ jobs:
         run: |
           git fetch origin
           git checkout main
-          git merge origin/release --no-ff -m "Merge release into main"
+          git merge origin/release --no-ff --allow-unrelated-histories -m "Merge release into main"
           git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} main
