@@ -1,8 +1,10 @@
 name: Release CI/CD Pipeline
 
 on:
-  push:
-    branches: [ "release" ]
+  workflow_run:
+    workflows: ["Dev CI/CD Pipeline"]
+    types:
+      - completed
 
 permissions:
   contents: write
