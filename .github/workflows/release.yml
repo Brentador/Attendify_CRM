@@ -26,9 +26,10 @@ jobs:
 
       
       - name: Run tests
-        run: npm test
+        run: npm run test:integration
 
       - name: Push to release branch
+        if: sucess()
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |

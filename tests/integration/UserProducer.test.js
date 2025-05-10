@@ -4,10 +4,11 @@ const checkDeletedUsers = require('../../salesforce-service/producers/producerDe
 const connectRabbitmq = require('../../salesforce-service/rabbitmq');
 const { getConnection } = require('../../salesforce-service/salesforce');
 const checkUpdatedUsers = require('../../salesforce-service/producers/producerUpdateUser');
-const startProducer = require('../../salesforce-service/producers/producerCreateUser');
+const bcrypt = require('bcryptjs');
+const { createPassword, checkCreatedUsers } = require('../../salesforce-service/producers/producerCreateUser');
 
-jest.mock('amqplib');
 jest.mock('faye');
+jest.mock('amqplib');
 jest.mock('../../salesforce-service/rabbitmq');
 jest.mock('../../salesforce-service/salesforce');
 
@@ -39,7 +40,7 @@ describe('Producer Tests', () => {
             subscribe: jest.fn((channel, callback) => {
                 const mockMessage = {
                     payload: {
-                        email__c: 'test@example.com',
+                        email__c: 'deleted@example.com',
                     },
                 };
                 callback(mockMessage);
@@ -49,6 +50,7 @@ describe('Producer Tests', () => {
         Faye.Client.mockImplementation(() => mockClient);
 
         await checkDeletedUsers();
+
 
         expect(connectRabbitmq).toHaveBeenCalled();
         expect(getConnection).toHaveBeenCalled();
@@ -70,8 +72,8 @@ describe('Producer Tests', () => {
                         email__c: 'updated@example.com',
                         first_name__c: 'Updated',
                         last_name__c: 'User',
-                        LastModifiedDate: '2025-05-08T12:00:00Z',
-                        CreatedDate: '2025-05-07T12:00:00Z',
+                        title__c: 'Ms.',
+                        uid__c: 'SF987654321',
                     },
                 };
                 callback(mockMessage);
@@ -102,8 +104,8 @@ describe('Producer Tests', () => {
                         email__c: 'created@example.com',
                         first_name__c: 'Created',
                         last_name__c: 'User',
-                        LastModifiedDate: '2025-05-08T12:00:00Z',
-                        CreatedDate: '2025-05-07T12:00:00Z',
+                        title__c: 'Ms.',
+                        uid__c: 'SF987654321',
                     },
                 };
                 callback(mockMessage);
@@ -112,17 +114,25 @@ describe('Producer Tests', () => {
 
         Faye.Client.mockImplementation(() => mockClient);
 
-        await startProducer();
+        await checkCreatedUsers();
 
         expect(connectRabbitmq).toHaveBeenCalled();
         expect(getConnection).toHaveBeenCalled();
         expect(mockClient.setHeader).toHaveBeenCalledWith('Authorization', 'Bearer mockAccessToken');
-        expect(mockClient.subscribe).toHaveBeenCalledWith('/event/created_user__e', expect.any(Function));
+        expect(mockClient.subscribe).toHaveBeenCalledWith('/event/created_producer__e', expect.any(Function));
         expect(mockChannel.publish).toHaveBeenCalledWith(
             'user-management',
-            'user.create',
+            'user.register',
             expect.any(Buffer)
         );
+    });
 
+    it('should generate a hashed password from a string', async () => {
+        const password = 'TestPassword123!';
+        const hashed = await createPassword(password);
+        expect(typeof hashed).toBe('string');
+        expect(hashed.length).toBeGreaterThan(0);
+        const isMatch = await bcrypt.compare(password, hashed);
+        expect(isMatch).toBe(true);
     });
 });

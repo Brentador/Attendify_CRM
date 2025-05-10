@@ -21,7 +21,7 @@ async function checkDeletedUsers(){
 
         client.setHeader('Authorization', `Bearer ${accessToken}`);
 
-        void client.subscribe('/event/deleted_user__e', async (message) =>{
+        void client.subscribe('/event/deleted_user__e', (message) =>{
             console.log('Received message:', message);
 
             const user = message.payload;

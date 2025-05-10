@@ -20,19 +20,14 @@ async function checkUpdatedUsers() {
 
         client.setHeader('Authorization', `Bearer ${accessToken}`);
 
-        void client.subscribe('/event/updated_producer__e', async (message) => {
+        void client.subscribe('/event/updated_producer__e', (message) => {
             const user = message.payload;
-            if (user.LastModifiedDate !== user.CreatedDate) {
                 console.log('Received updated user message:', message);
                 const builder = new Builder();
                 const mappedUserXML = mapXML(user);
                 const messageXML = builder.buildObject(mappedUserXML);
                 channel.publish("user-management", "user.update", Buffer.from(messageXML));
                 console.log(`Message sent for updated user: ${user}`);
-            } else {
-                console.log(`Skipping user ${user.Id} as it was just created.`);
-            }
-
         })
     } catch (error) {
         console.error('Error in producer:', error);
