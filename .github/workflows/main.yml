@@ -1,8 +1,10 @@
 name: Main CI/CD Pipeline
 
 on:
-  push:
-    branches: [ "main" ]
+  workflow_run:
+    workflows: ["Release CI/CD Pipeline"]
+    types:
+      - completed
 
 jobs:
   build:
