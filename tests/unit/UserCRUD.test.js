@@ -70,7 +70,7 @@ describe('UserCRUD.updateUser', () => {
         const result = await UserCRUD.updateUser(userData);
 
         expect(getConnection).toHaveBeenCalledTimes(1);
-        expect(mockFind).toHaveBeenCalledWith({ email__c: userData.email__c });
+        expect(mockFind).toHaveBeenCalledWith({ uid__c: userData.uid__c });
         expect(mockExecute).toHaveBeenCalled();
         expect(mockUpdate).toHaveBeenCalledWith({ Id: '12345', ...userData });
         expect(result).toEqual({ success: true });
@@ -90,7 +90,7 @@ describe('UserCRUD.updateUser', () => {
         const result = await UserCRUD.updateUser(userData);
 
         expect(getConnection).toHaveBeenCalledTimes(1);
-        expect(mockFind).toHaveBeenCalledWith({ email__c: userData.email__c });
+        expect(mockFind).toHaveBeenCalledWith({ uid__c: userData.uid__c });
         expect(result).toBeUndefined();
     });
 
@@ -109,7 +109,7 @@ describe('UserCRUD.updateUser', () => {
         const result = await UserCRUD.updateUser(userData);
 
         expect(getConnection).toHaveBeenCalledTimes(1);
-        expect(mockFind).toHaveBeenCalledWith({ email__c: userData.email__c });
+        expect(mockFind).toHaveBeenCalledWith({ uid__c: userData.uid__c });
         expect(mockUpdate).toHaveBeenCalledWith({ Id: '12345', ...userData });
         expect(result).toBeUndefined();
     });
@@ -127,9 +127,9 @@ describe('UserCRUD.deleteUser', () => {
             }),
         })
         
-        const result = await UserCRUD.deleteUser('test@example.com');
+        const result = await UserCRUD.deleteUser('SF1747078879231');
         expect(getConnection).toHaveBeenCalledTimes(1);
-        expect(mockQuery).toHaveBeenCalledWith(`SELECT Id FROM Users_CRM__c WHERE email__c = 'test@example.com'`);
+        expect(mockQuery).toHaveBeenCalledWith(`SELECT Id FROM Users_CRM__c WHERE uid__c = 'SF1747078879231'`);
         expect(mockDestroy).toHaveBeenCalledWith('12345');
         expect(result).toEqual({ success: true, message: 'User deleted successfully' });
     });
@@ -140,9 +140,9 @@ describe('UserCRUD.deleteUser', () => {
             query: mockQuery,
         });
 
-        const result = await UserCRUD.deleteUser('test@example.com');
+        const result = await UserCRUD.deleteUser('SF1747078879231');
         expect(getConnection).toHaveBeenCalledTimes(1);
-        expect(mockQuery).toHaveBeenCalledWith(`SELECT Id FROM Users_CRM__c WHERE email__c = 'test@example.com'`);
+        expect(mockQuery).toHaveBeenCalledWith(`SELECT Id FROM Users_CRM__c WHERE uid__c = 'SF1747078879231'`);
         expect(result).toEqual({ success: false, message: 'User not found' });
     });
 
