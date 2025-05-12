@@ -1,14 +1,14 @@
-const createdUser = require('./producerCreateUser');
-const updatedUser = require('./producerUpdateUser');
-const deletedUser = require('./producerDeleteUser');
+const { checkCreatedUsers } = require('./producerCreateUser');
+const checkUpdatedUsers = require('./producerUpdateUser');
+const checkDeletedUsers = require('./producerDeleteUser');
 // const startEventCDCProducer = require('./producerEventCDC');
 
 async function startProducers(){
     try {
         console.log('Starting all producers...');
-        await createdUser();
-        await updatedUser();
-        await deletedUser();
+        await checkCreatedUsers();
+        await checkUpdatedUsers();
+        await checkDeletedUsers();
         // await startEventCDCProducer();
         console.log('All producers started successfully.');
     } catch (error) {
