@@ -17,10 +17,11 @@ async function checkCreatedUsers() {
 
         const client = new Faye.Client(`${instanceUrl}/cometd/58.0`, {
             timeout: 60,
-            retry: 5,
+            retry: 1,
         });
 
         client.setHeader('Authorization', `Bearer ${accessToken}`);
+            console.log('Attempting to subscribe to created user channel');
             void client.subscribe('/event/created_producer__e', (message) => {
                 console.log('Received created user message:', message);
     

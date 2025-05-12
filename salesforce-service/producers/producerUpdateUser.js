@@ -15,7 +15,7 @@ async function checkUpdatedUsers() {
 
         const client = new Faye.Client(`${instanceUrl}/cometd/58.0`, {
             timeout: 60,
-            retry: 5,
+            retry: 1,
         });
 
         client.setHeader('Authorization', `Bearer ${accessToken}`);
@@ -25,7 +25,9 @@ async function checkUpdatedUsers() {
                 console.log('Received updated user message:', message);
                 const builder = new Builder();
                 const mappedUserXML = mapXML(user);
+                console.log('Mapped user XML:', mappedUserXML);
                 const messageXML = builder.buildObject(mappedUserXML);
+                console.log('Message XML:', messageXML);
                 channel.publish("user-management", "user.update", Buffer.from(messageXML));
                 console.log(`Message sent for updated user: ${user}`);
         })
@@ -42,7 +44,7 @@ async function checkUpdatedUsers() {
                     operation: 'update',
                 },
                 user: {
-                    // id: userXML.Id,
+                    uid: userXML.uid__c,
                     first_name: userXML.first_name__c,
                     last_name: userXML.last_name__c,
                     // date_of_birth: userXML.dob__c,

@@ -50,6 +50,6 @@ jobs:
             git pull origin main
 
             # start containers
-            docker compose up -d 
+            docker compose up --build -d
 
           EOF
