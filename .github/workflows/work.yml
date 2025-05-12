@@ -1,4 +1,4 @@
-# change "brent" to the name of your branch you want to work in
+# change "brent" to the name of your branch
 name: Work CI/CD Pipeline
 
 on:
