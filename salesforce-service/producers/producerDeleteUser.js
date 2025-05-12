@@ -16,7 +16,7 @@ async function checkDeletedUsers(){
 
         const client = new Faye.Client(`${instanceUrl}/cometd/58.0`,{
             timeout: 60,
-            retry: 5,
+            retry: 1,
         });
 
         client.setHeader('Authorization', `Bearer ${accessToken}`);
