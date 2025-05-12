@@ -25,13 +25,13 @@ async function checkDeletedUsers(){
             console.log('Received message:', message);
 
             const user = message.payload;
-            const email = user.email__c;
-            console.log(`User deleted: ${email}`);
+            const uid = user.uid__c;
+            console.log(`User deleted: ${uid}`);
             const builder = new Builder();
-            const mappedUserXML = mapXML({ email__c: email });
+            const mappedUserXML = mapXML({ uid__c: uid });
             const messageXML = builder.buildObject(mappedUserXML);
             channel.publish("user-management", "user.delete", Buffer.from(messageXML));
-            console.log(`Message sent for deleted user: ${email}`);
+            console.log(`Message sent for deleted user: ${uid}`);
         })
     }catch (error) {
         console.error('Error in delete producer:', error);
@@ -52,7 +52,7 @@ function mapXML(userXML){
                 // date_of_birth: userXML.dob__c,
                 // phone_number: userXML.phone__c,
                 // title: userXML.title__c,
-                email: userXML.email__c,
+                uid: userXML.uid__c,
                 // address: {
                 //     street: userXML.street_name__c,
                 //     number: userXML.house_number__c,

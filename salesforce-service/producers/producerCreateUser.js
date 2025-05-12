@@ -21,6 +21,7 @@ async function checkCreatedUsers() {
         });
 
         client.setHeader('Authorization', `Bearer ${accessToken}`);
+            console.log('Attempting to subscribe to created user channel');
             void client.subscribe('/event/created_producer__e', (message) => {
                 console.log('Received created user message:', message);
     
