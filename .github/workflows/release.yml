@@ -1,10 +1,14 @@
 name: Release CI/CD Pipeline
 
+# on:
+#   workflow_run:
+#     workflows: ["Dev CI/CD Pipeline"]
+#     types:
+#       - completed
+
 on:
-  workflow_run:
-    workflows: ["Dev CI/CD Pipeline"]
-    types:
-      - completed
+  push:
+    branches: [ "release" ]
 
 permissions:
   contents: write
@@ -31,14 +35,3 @@ jobs:
       - name: Run tests
         run: npm run test:integration
 
-      - name: Push to main
-        if: success()
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          git fetch origin
-          git checkout main
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
-          git merge origin/release --no-ff --allow-unrelated-histories -m "Merge release into main"
-          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} main
