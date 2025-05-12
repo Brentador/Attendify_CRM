@@ -25,7 +25,9 @@ async function checkUpdatedUsers() {
                 console.log('Received updated user message:', message);
                 const builder = new Builder();
                 const mappedUserXML = mapXML(user);
+                console.log('Mapped user XML:', mappedUserXML);
                 const messageXML = builder.buildObject(mappedUserXML);
+                console.log('Message XML:', messageXML);
                 channel.publish("user-management", "user.update", Buffer.from(messageXML));
                 console.log(`Message sent for updated user: ${user}`);
         })
