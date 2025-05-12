@@ -48,6 +48,7 @@ async function startConsumer() {
                         province__c: user.address?.province || null,
                         street_name__c: user.address?.street || null,
                         title__c: user.title,
+                        uid__c: user.uid,
                 };
 
                 if(parsedData.attendify.info.sender.toLowerCase() != "crm"){
@@ -56,7 +57,7 @@ async function startConsumer() {
                     } else if (operation === 'update') {
                         await UserCRUD.updateUser(userData);
                     } else if (operation === 'delete') {
-                        await UserCRUD.deleteUser(userData.email__c);
+                        await UserCRUD.deleteUser(userData.uid__c);
                     } else {
                         console.log('Invalid operation');
                     }
