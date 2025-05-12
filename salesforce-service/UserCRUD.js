@@ -26,13 +26,13 @@ class UserService {
           return;
       }
     }
-
+    
     static async updateUser(userData) {
       try {
           const conn = await getConnection();
           
           const result = await conn.sobject('Users_CRM__c')
-              .find({ email__c: userData.email__c })
+              .find({ uid__c: userData.uid__c })
               .execute();
           
           if (result) {
@@ -46,7 +46,7 @@ class UserService {
               return await conn.sobject('Users_CRM__c').update(userToUpdate);
             
           } else {
-              console.log(`No user found with email: ${userData.email__c}`);
+              console.log(`No user found with uid: ${userData.uid__c}`);
               return { success: false, message: 'User not found' };
           }
       } catch (error) {
