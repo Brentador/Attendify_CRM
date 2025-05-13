@@ -1,4 +1,4 @@
-const SessionService = require('./SessionService');
+const SessionService = require('./SessionCRUD');
 const { parseStringPromise } = require('xml2js');
 const connectRabbitmq = require('../rabbitmq');
 
