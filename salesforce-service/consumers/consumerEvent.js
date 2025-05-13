@@ -1,120 +1,113 @@
 const amqp = require('amqplib');
-const EventService = require('./EventCRUD'); // Import EventService
+const EventService = require('./EventCRUD'); // Assuming this path is correct
 const { parseStringPromise } = require('xml2js');
 const connectRabbitmq = require('../rabbitmq'); // Adjust the path as necessary
 
 async function startEventConsumer() {
     console.log('Starting Event consumer...');
-    let connection;
+    // Jouw RabbitMQ connectie logica:
+    let connection; // Behoud 'connection' in bredere scope voor sluiten in catch
     try {
         // Connect to RabbitMQ server
-        const connection = await connectRabbitmq();
-        console.log('Connected to RabbitMQ3.');
-        const channel =  await connection.createChannel();
-        console.log('Connected to RabbitMQ4.');
+        connection = await connectRabbitmq(); // Gebruik jouw helper
+        console.log('Connected to RabbitMQ via helper.'); // Jouw log
+        const channel = await connection.createChannel();
+        console.log('RabbitMQ channel created.'); // Jouw log
 
-        //assert queue
-        channel.assertQueue("crm.event", { durable: true });
-        console.log(`Consumer is listening on queue: crm.event`);
+        // Assert queue
+        const queueName = "crm.event"; // Queue voor events
+        await channel.assertQueue(queueName, { durable: true });
+        console.log(`Event Consumer is listening on queue: ${queueName}`);
 
         // Consume message from the queue
         channel.consume(
-            "crm.event",
+            queueName,
             async (message) => {
                 if (message !== null) {
                     try {
-                        // Get data from xml
                         const xmlData = message.content.toString();
                         console.log('Received event message (raw):', xmlData);
 
-                        // Parse XML
-                        // The new XML is flat, so parsedData will directly contain uid, title, etc.
                         const parsedData = await parseStringPromise(xmlData, {
                             explicitArray: false,
                             ignoreAttrs: true,
                             emptyTag: null,
-                            trim: true // Good for values like <gcid> 151515213 </gcid>
+                            trim: true
                         });
                         console.log('Parsed event XML data:', JSON.stringify(parsedData, null, 2));
 
-                        // Extract operation and sender from message properties (headers)
-                        // Fallback to default values if not present
-                        const operation = message.properties.headers?.operation || 'create'; // e.g., 'create', 'update', 'delete'
-                        const sender = message.properties.headers?.sender || 'external_system'; // e.g., 'your_external_system_name'
+                        // --- Extract data from the NESTED XML structure ---
+                        const operation = parsedData?.attendify?.info?.operation;
+                        const sender = parsedData?.attendify?.info?.sender;
+                        const eventDetails = parsedData?.attendify?.event; // Haal het hele event object op
 
-                        // --- Validate essential data from XML ---
-                        // The root element of your XML is not defined in the example,
-                        // so xml2js will create an object with keys being the top-level tags.
-                        // If your XML was wrapped in <event>...</event>, it would be parsedData.event.uid
-                        // Given the example, it's directly parsedData.uid, parsedData.title etc.
-                        const eventUid = parsedData.uid; // This is your primary identifier
-                        const eventTitle = parsedData.title;
-
-                        if (!eventUid || !eventTitle) {
-                            console.error('Invalid message structure or missing essential fields (uid, title):', JSON.stringify(parsedData, null, 2));
-                            channel.nack(message, false, false); // Reject and don't requeue
+                        // Valideer essentiële delen van de structuur
+                        if (!operation || !sender || !eventDetails) {
+                            console.error('Invalid message structure: Missing attendify.info or attendify.event. Parsed:', JSON.stringify(parsedData, null, 2));
+                            channel.nack(message, false, false);
                             return;
                         }
 
-                        // --- Map XML data to Salesforce field names ---
-                        // Combine date and time for Salesforce DateTime fields
+                        // --- Extract key identifiers FROM eventDetails ---
+                        // BELANGRIJK: De XML MOET <uid> en <title> binnen <event> bevatten
+                        const eventUid = eventDetails.uid;
+                        const eventTitle = eventDetails.title;
+
+                        if (!eventUid || !eventTitle) {
+                            console.error('Invalid event data: Missing uid or title within attendify.event. Event Details:', JSON.stringify(eventDetails, null, 2));
+                            channel.nack(message, false, false);
+                            return;
+                        }
+
+                        // --- Map XML data naar Salesforce veldnamen ---
                         let startDateSalesforce = null;
-                        if (parsedData.start_date && parsedData.start_time) {
-                            // Ensure time has seconds for full ISO8601, or that Salesforce can handle HH:mm
-                            startDateSalesforce = new Date(`${parsedData.start_date}T${parsedData.start_time}:00`).toISOString();
+                        if (eventDetails.start_date && eventDetails.start_time) {
+                            const timeParts = eventDetails.start_time.split(':');
+                            const startTimeFormatted = `${timeParts[0]}:${timeParts[1]}:${timeParts[2] || '00'}`;
+                            startDateSalesforce = new Date(`${eventDetails.start_date}T${startTimeFormatted}`).toISOString();
                         }
 
                         let endDateSalesforce = null;
-                        if (parsedData.end_date && parsedData.end_time) {
-                            endDateSalesforce = new Date(`${parsedData.end_date}T${parsedData.end_time}:00`).toISOString();
+                        if (eventDetails.end_date && eventDetails.end_time) {
+                            const timeParts = eventDetails.end_time.split(':');
+                            const endTimeFormatted = `${timeParts[0]}:${timeParts[1]}:${timeParts[2] || '00'}`;
+                            endDateSalesforce = new Date(`${eventDetails.end_date}T${endTimeFormatted}`).toISOString();
                         }
 
-                        const eventData = {
-                            // Assuming you have an External_ID__c field in Salesforce to store 'uid'
-                            //Uid__c: eventDetials.Uid, // XML uid -> Salesforce Uid__c (External ID)
-                            name_event__c: eventDetails.Title, // XML title -> Salesforce name_event__c
+                        const salesforceData = {
+                            Uid__c: eventUid, // Van eventDetails.uid
+                            name_event__c: eventTitle, // Van eventDetails.title
                             Address__c: eventDetails.location || null,
                             description__c: eventDetails.description || null,
                             Start_date__c: startDateSalesforce,
                             End_date__c: endDateSalesforce,
                             Organizer_Name__c: eventDetails.organizer_name || null,
                             Organizer_UID__c: eventDetails.organizer_uid || null,
-                            Entrance_Fee__c: eventDetails.entrance_fee || null, // Assuming Entrance_Fee__c
-                            // max_attendees__c: not present in the new XML, so it will be null or handled by EventService
+                            Entrance_Fee__c: eventDetails.entrance_fee || null,
+                            // Als GCID__c bestaat in Salesforce en je wilt het mappen:
+                            // GCID__c: eventDetails.gcid || null,
+                            // Als max_attendees__c bestaat en je wilt het mappen:
+                            // max_attendees__c: eventDetails.max_attendees ? parseInt(eventDetails.max_attendees, 10) : null,
                         };
-                        console.log('Mapped Event Data:', JSON.stringify(eventData, null, 2));
-
+                        console.log('Mapped Salesforce Data:', JSON.stringify(salesforceData, null, 2));
 
                         // --- Process based on operation ---
-                        // The original code ignored messages from 'crm'. Adapt if needed.
                         if (sender.toLowerCase() !== "crm") {
-                            console.log(`Processing operation '${operation}' for event with UID '${eventUid}' from sender '${sender}'`);
+                            console.log(`Processing operation '${operation}' for event UID '${eventUid}' from sender '${sender}'`);
 
                             if (operation === 'create') {
-                                // For create, EventService.createEvent should handle the data.
-                                // It typically shouldn't receive an existing Salesforce ID (like 'Name' auto-number)
-                                // External_ID__c is good to pass for creation to link it.
-                                await EventService.createEvent(eventData);
-                                console.log(`Event created based on message for UID: ${eventUid}, Title: ${eventData.name_event__c}`);
+                                await EventService.createEvent(salesforceData);
+                                console.log(`Event created for UID: ${eventUid}, Title: ${salesforceData.name_event__c}`);
                             } else if (operation === 'update') {
-                                // For update, EventService.updateEvent needs to know how to find the record.
-                                // It could use External_ID__c. The EventService.updateEvent method
-                                // might need to be adapted to accept an object containing the External_ID__c
-                                // or take the external ID as a separate parameter.
-                                // Let's assume EventService.updateEvent can find by External_ID__c if it's in the payload.
-                                await EventService.updateEvent(eventData);
-                                console.log(`Event updated based on message for UID: ${eventUid}`);
+                                await EventService.updateEvent(salesforceData); // Moet Uid__c gebruiken voor lookup
+                                console.log(`Event updated for UID: ${eventUid}`);
                             } else if (operation === 'delete') {
-                                // For delete, EventService.deleteEvent needs the identifier.
-                                // The original used 'Name' (Salesforce Auto Number).
-                                // Now, we should use the external identifier 'uid'.
-                                // EventService.deleteEvent will need to be able to delete by this external ID.
-                                await EventService.deleteEvent(eventUid); // Pass the UID for deletion
-                                console.log(`Event deleted based on message for UID: ${eventUid}`);
+                                await EventService.deleteEvent(eventUid); // eventUid is de waarde van Uid__c
+                                console.log(`Event deleted for UID: ${eventUid}`);
                             } else {
-                                console.warn(`Invalid operation received: ${operation}. Message will be nacked.`);
-                                channel.nack(message, false, false); // Invalid operation, nack
-                                return; // Important to return after nack
+                                console.warn(`Invalid operation received: '${operation}'. Message will be nacked.`);
+                                channel.nack(message, false, false);
+                                return;
                             }
                         } else {
                             console.log(`Ignoring message from sender 'crm' for event UID '${eventUid}'.`);
@@ -125,66 +118,28 @@ async function startEventConsumer() {
 
                     } catch (processingError) {
                         console.error('Error processing event message:', processingError);
-                        // Nack the message, false for requeue means it might go to a DLQ or be discarded
-                        channel.nack(message, false, false);
+                        if (channel && message) { // Zorg ervoor dat channel bestaat voordat je nack probeert
+                            channel.nack(message, false, false);
+                            console.log("Message nacked due to processing error.");
+                        }
                     }
                 }
             },
             {
-                noAck: false // We will manually acknowledge
+                noAck: false // Handmatig acknowledgen
             }
         );
     } catch (error) {
-        console.error('Error starting Event Consumer:', error);
-        if (connection) {
+        console.error('Error starting Event Consumer or during RabbitMQ setup:', error); // Aangepaste error message
+        if (connection) { // Als de connectie was gemaakt voor de error
             try {
                 await connection.close();
-                console.log("RabbitMQ connection closed due to startup error.");
+                console.log("RabbitMQ connection closed due to error in consumer setup or processing."); // Aangepaste error message
             } catch (closeError) {
-                console.error("Error closing RabbitMQ connection:", closeError);
+                console.error("Error closing RabbitMQ connection during error handling:", closeError);
             }
         }
-        // Consider re-throwing or exiting if consumer cannot start
-        // process.exit(1); // Or implement a retry mechanism
     }
 }
 
 module.exports = startEventConsumer;
-
-// --- Important considerations for your EventService ---
-// 1. EventService.createEvent(data):
-//    - Should map `data.External_ID__c` to the correct Salesforce external ID field.
-//    - Should map other fields accordingly.
-//
-// 2. EventService.updateEvent(data):
-//    - Must be able to find the Salesforce record using `data.External_ID__c`.
-//    - Then, update the found record with the other fields in `data`.
-//    - Alternatively, change signature to `EventService.updateEvent(externalId, dataToUpdate)`.
-//
-// 3. EventService.deleteEvent(externalId):
-//    - Must be able to find and delete the Salesforce record using the provided `externalId` (which is `eventUid`).
-//
-// Ensure your Salesforce object for Events has custom fields like:
-// - External_ID__c (Text, Unique, External ID) for `uid`
-// - GCID__c (Text or Number) for `gcid`
-// - name_event__c (Text) for `title`
-// - description__c (Long Text Area) for `description`
-// - Address__c (Text or Address Compound Field) for `location`
-// - Start_date__c (DateTime) for combined `start_date` and `start_time`
-// - End_date__c (DateTime) for combined `end_date` and `end_time`
-// - Organizer_Name__c (Text) for `organizer_name`
-// - Organizer_UID__c (Text, potentially Lookup if Organizers are also synced) for `organizer_uid`
-// - Entrance_Fee__c (Currency or Number) for `entrance_fee`
-//
-// --- How to send messages with headers (example using amqplib for publisher) ---
-/*
-async function publishEventMessage(channel, queueName, xmlPayload, operationType, senderSystem) {
-    channel.sendToQueue(queueName, Buffer.from(xmlPayload), {
-        persistent: true,
-        headers: {
-            operation: operationType, // 'create', 'update', or 'delete'
-            sender: senderSystem     // e.g., 'myApp'
-        }
-    });
-}
-*/
