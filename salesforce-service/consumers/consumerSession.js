@@ -7,9 +7,9 @@ async function startSessionConsumer() {
     let connection;
     try {
         connection = await amqp.connect(process.env.RABBITMQ_URL);
-        console.log('Connected to RabbitMQ for Session Consumer.');
+        console.log('Connected to RabbitMQ5.');
         const channel = await connection.createChannel();
-        console.log('RabbitMQ channel created for Session Consumer.');
+        console.log('Connected to RabbitMQ6.');
 
         const queueName = "crm.session";
         await channel.assertQueue(queueName, { durable: true });
