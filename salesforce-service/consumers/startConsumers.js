@@ -1,5 +1,5 @@
 const startUserConsumer = require('./consumerUser');
-// const startEventConsumer = require('./consumerEvent');
+const startEventConsumer = require('./consumerEvent');
 
 async function startConsumers(){
     try {

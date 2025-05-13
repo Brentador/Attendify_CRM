@@ -1,8 +1,8 @@
-// C:\Users\Gebruiker\Desktop\api_bib\Attendify_CRM\test-dotenv.js
+
 console.log("Huidige werkdirectory (vanuit test-dotenv.js):", process.cwd());
 console.log("Test: poging om .env te laden uit dezelfde map...");
 
-const dotenvResult = require('dotenv').config(); // Geen path, zoekt in huidige map
+const dotenvResult = require('dotenv').config();
 
 if (dotenvResult.error) {
   console.error("FOUT bij het laden van .env in test-dotenv.js:", dotenvResult.error);

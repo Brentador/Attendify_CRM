@@ -15,7 +15,7 @@ describe('UserCRUD.createUser', () => {
         const userData = {
             email__c: 'test@example.com',
             first_name__c: 'Test',
-            last_name__c: 'Icle',
+            last_name__c: 'person',
             bus_number__c: '123',
             city__c: 'Test City',
             company_id__c: 'COMP123',
