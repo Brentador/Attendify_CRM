@@ -1,4 +1,4 @@
-const amqp = require('amqplib');
+//const amqp = require('amqplib');
 const EventService = require('./EventCRUD'); 
 const { parseStringPromise } = require('xml2js');
 const connectRabbitmq = require('../rabbitmq');
@@ -36,9 +36,9 @@ async function startEventConsumer() {
                         const event = parsedData?.attendify?.event; 
 
                         if (!operation || !sender || !event) {
-                             console.error('Invalid message structure received:', JSON.stringify(parsedData, null, 2));
-                             channel.nack(message, false, false); 
-                             return;
+                            console.error('Invalid message structure received:', JSON.stringify(parsedData, null, 2));
+                            channel.nack(message, false, false); 
+                            return;
                         }
 
                          // Map XML data naar Salesforce veldnamen
@@ -69,10 +69,10 @@ async function startEventConsumer() {
                                     console.error("Cannot update event: 'event_crm_id' (Name) missing in XML.");
                                 } else {
                                     await EventService.updateEvent(eventData); 
-                                     console.log(`Event updated based on message for Name: ${eventData.Name}`);
+                                      console.log(`Event updated based on message for Name: ${eventData.Name}`);
                                 }
                             } else if (operation === 'delete') {
-                                 if (!eventData.Name) {
+                                if (!eventData.Name) {
                                     console.error("Cannot delete event: 'event_crm_id' (Name) missing in XML.");
                                 } else {
                                     await EventService.deleteEvent(eventData.Name); 
@@ -82,7 +82,7 @@ async function startEventConsumer() {
                                 console.log(`Invalid operation received: ${operation}`);
                             }
                         } else {
-                             console.log("Ignoring message from sender 'crm'.");
+                          console.log("Ignoring message from sender 'crm'.");
                         }
 
                         
@@ -104,8 +104,8 @@ async function startEventConsumer() {
         console.error('Error starting Event Consumer:', error);
         
         if (connection) {
-           await connection.close();
-           console.log("RabbitMQ connection closed due to error.")
+          await connection.close();
+          console.log("RabbitMQ connection closed due to error.")
         }
         
     }
