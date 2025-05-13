@@ -71,16 +71,15 @@ async function startEventConsumer() {
 
                         const eventData = {
                             // Assuming you have an External_ID__c field in Salesforce to store 'uid'
-                            External_ID__c: eventUid,
-                            GCID__c: parsedData.gcid || null, // Assuming a GCID__c field
-                            name_event__c: eventTitle,
-                            description__c: parsedData.description || null,
-                            Address__c: parsedData.location || null, // 'location' maps to Address
+                            Uid__c: eventUid, // XML uid -> Salesforce Uid__c (External ID)
+                            name_event__c: eventTitle, // XML title -> Salesforce name_event__c
+                            Address__c: eventDetails.location || null,
+                            description__c: eventDetails.description || null,
                             Start_date__c: startDateSalesforce,
                             End_date__c: endDateSalesforce,
-                            Organizer_Name__c: parsedData.organizer_name || null, // Assuming Organizer_Name__c field
-                            Organizer_UID__c: parsedData.organizer_uid || null, // Assuming Organizer_UID__c field
-                            Entrance_Fee__c: parsedData.entrance_fee ? parseFloat(parsedData.entrance_fee) : null, // Assuming Entrance_Fee__c
+                            Organizer_Name__c: eventDetails.organizer_name || null,
+                            Organizer_UID__c: eventDetails.organizer_uid || null,
+                            Entrance_Fee__c: eventDetails.entrance_fee || null, // Assuming Entrance_Fee__c
                             // max_attendees__c: not present in the new XML, so it will be null or handled by EventService
                         };
                         console.log('Mapped Event Data:', JSON.stringify(eventData, null, 2));
