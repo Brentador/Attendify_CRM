@@ -1,5 +1,4 @@
-const amqp = require('amqplib');
-const EventService = require('./EventCRUD'); // Assuming this path is correct
+const EventService = require('./EventCRUD'); // Import EventService
 const { parseStringPromise } = require('xml2js');
 const connectRabbitmq = require('../rabbitmq'); // Adjust the path as necessary
 
