@@ -71,7 +71,7 @@ async function startEventConsumer() {
 
                         const eventData = {
                             // Assuming you have an External_ID__c field in Salesforce to store 'uid'
-                            Uid__c: eventDetials.Uid, // XML uid -> Salesforce Uid__c (External ID)
+                            //Uid__c: eventDetials.Uid, // XML uid -> Salesforce Uid__c (External ID)
                             name_event__c: eventDetails.Title, // XML title -> Salesforce name_event__c
                             Address__c: eventDetails.location || null,
                             description__c: eventDetails.description || null,
