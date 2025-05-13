@@ -1,16 +1,10 @@
-const SessionService = require('../SessionCRUD');
-const { getSpeakerId, getEventId } = require('../salesforce');
+const SessionService = require('../consumers/SessionCRUD');
+const { getEventId } = require('../salesforce');
 
 (async () => {
   try {
-    // Haal het Salesforce ID op voor de speaker (naam = '34')
-    const speakerId = await getSpeakerId('34');  // Vervang met de juiste naam
-    const eventId = await getEventId('2');  // Vervang met de juiste naam
-
-    if (!speakerId) {
-      console.error('No valid speaker found');
-      return;
-    }
+    // Retrieve the Salesforce ID for the event (replace '2' with the actual ID or UID)
+    const eventId = await getEventId('2');
 
     if (!eventId) {
       console.error('No valid event found');
@@ -18,18 +12,25 @@ const { getSpeakerId, getEventId } = require('../salesforce');
     }
 
     const sessionData = {
-      uid_event__c: eventId, // Vervang met geldige waarde
-      speaker__c: speakerId, // Gebruik het opgehaalde Salesforce ID
-      description__c: 'Demo sessie aanmaak',
-      location__c: 'Amsterdam',
-      start_date__c: '2025-05-10T09:00:00Z',
-      end_date__c: '2025-05-10T11:00:00Z',
+      uid: 'GC1747123804524', // This should match the UID format from your XML
+      event_id: eventId,
+      title: 'Demo Session Title',
+      description: 'This is a test session for demonstration purposes.',
+      date: '2025-05-10',
+      start_time: '09:00:00',
+      end_time: '11:00:00',
+      location: 'Amsterdam',
+      max_attendees: 30,
+      speaker: {
+        name: 'Dr. John Doe',
+        bio: 'Expert in Educational Technology.'
+      }
     };
     
-    // Maak de sessie aan
+    // Create the session
     const result = await SessionService.createSession(sessionData);
-    console.log('Sessie succesvol aangemaakt:', result);
+    console.log('Session successfully created:', result);
   } catch (error) {
-    console.error('Fout bij aanmaken sessie:', error);
+    console.error('Error creating session:', error);
   }
 })();
