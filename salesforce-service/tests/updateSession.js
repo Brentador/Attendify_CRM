@@ -1,4 +1,4 @@
-const SessionService = require('../SessionCRUD');
+const SessionService = require('../consumers/SessionCRUD');
 const { getSpeakerId, getSessionId } = require('../salesforce');
 
 (async () => {

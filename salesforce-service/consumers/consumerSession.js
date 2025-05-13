@@ -1,5 +1,5 @@
 const amqp = require('amqplib');
-const SessionService = require('../SessionService'); // Import SessionService
+const SessionService = require('./SessionService'); // Import SessionService
 const { parseStringPromise } = require('xml2js');
 
 async function startSessionConsumer() {
