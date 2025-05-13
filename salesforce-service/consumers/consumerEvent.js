@@ -16,11 +16,11 @@ async function startEventConsumer() {
 
         //assert queue
         channel.assertQueue("crm.event", { durable: true });
-        console.log(`Consumer is listening on queue: crm.user`);
+        console.log(`Consumer is listening on queue: crm.event`);
 
         // Consume message from the queue
         channel.consume(
-            queueName,
+            "crm.event",
             async (message) => {
                 if (message !== null) {
                     try {
