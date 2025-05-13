@@ -1,5 +1,5 @@
 const amqp = require('amqplib');
-const EventService = require('../EventCRUD'); // Import EventService
+const EventService = require('./EventCRUD'); 
 const { parseStringPromise } = require('xml2js');
 
 
