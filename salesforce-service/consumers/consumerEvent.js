@@ -1,6 +1,7 @@
 const amqp = require('amqplib');
 const EventService = require('./EventCRUD'); // Import EventService
 const { parseStringPromise } = require('xml2js');
+const { connectRabbitmq } = require('../rabbitmq'); // Adjust the path as necessary
 
 async function startEventConsumer() {
     console.log('Starting Event consumer...');
