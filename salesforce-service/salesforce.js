@@ -45,20 +45,20 @@ async function getConnection() {
 //   }
 // }
 
-// async function getEventId(eventId) {
-//   try {
-//     const conn = await getConnection();
-//     const result = await conn.query(`SELECT Id FROM Eventcrm__c WHERE Name = '${eventId}'`);
-//     if (result.records.length > 0) {
-//       return result.records[0].Id; // Return the Salesforce User ID
-//     } else {
-//       throw new Error(`No event found with Name = ${eventId}`);
-//     }
-//   } catch (error) {
-//     console.error('Error fetching event ID:', error);
-//     throw error;
-//   }
-// }
+async function getEventId(eventId) {
+  try {
+    const conn = await getConnection();
+    const result = await conn.query(`SELECT Id FROM Eventcrm__c WHERE Name = '${eventId}'`);
+    if (result.records.length > 0) {
+      return result.records[0].Id; // Return the Salesforce User ID
+    } else {
+      throw new Error(`No event found with Name = ${eventId}`);
+    }
+  } catch (error) {
+    console.error('Error fetching event ID:', error);
+    throw error;
+  }
+}
 
 // async function getSessionId(sessionId) {
 //   try {
@@ -76,4 +76,4 @@ async function getConnection() {
 // }
 
 // module.exports = { getConnection, getSpeakerId, getEventId, getSessionId };
-module.exports = { getConnection };
+module.exports = { getConnection, getEventId };
