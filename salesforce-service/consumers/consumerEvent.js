@@ -10,8 +10,8 @@ async function startEventConsumer() {
         // Connect to RabbitMQ server
         connection = await amqp.connect(process.env.RABBITMQ_URL);
         console.log('Connected to RabbitMQ for Event Consumer.');
-        const channel = await connection.createChannel();
-        console.log('RabbitMQ channel created for Event Consumer.');
+        //const channel = await connection.createChannel();
+        //console.log('RabbitMQ channel created for Event Consumer.');
 
         // Assert queue
         const queueName = "crm.event"; // Queue voor events
