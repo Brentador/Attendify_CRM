@@ -1,5 +1,5 @@
 const amqp = require('amqplib');
-const EventService = require('../EventCRUD'); // Import EventService
+const EventService = require('./EventCRUD'); // Import EventService
 const { parseStringPromise } = require('xml2js');
 
 async function startEventConsumer() {
@@ -7,19 +7,18 @@ async function startEventConsumer() {
     let connection;
     try {
         // Connect to RabbitMQ server
-        connection = await amqp.connect(process.env.RABBITMQ_URL);
-        console.log('Connected to RabbitMQ for Event Consumer.');
-        const channel = await connection.createChannel();
-        console.log('RabbitMQ channel created for Event Consumer.');
+        const connection = await connectRabbitmq();
+        console.log('Connected to RabbitMQ3.');
+        const channel =  await connection.createChannel();
+        console.log('Connected to RabbitMQ4.');
 
-        // Assert queue
-        const queueName = "crm.event"; // Queue voor events
-        await channel.assertQueue(queueName, { durable: true });
-        console.log(`Event Consumer is listening on queue: ${queueName}`);
+        //assert queue
+        channel.assertQueue("crm.event", { durable: true });
+        console.log(`Consumer is listening on queue: crm.event`);
 
         // Consume message from the queue
         channel.consume(
-            queueName,
+            "crm.event",
             async (message) => {
                 if (message !== null) {
                     try {
