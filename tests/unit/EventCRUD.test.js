@@ -1,7 +1,7 @@
-const EventService = require('./EventCRUD');
-const { getConnection } = require('../salesforce');
+const EventService = require('../../salesforce-service/consumers/EventCRUD');
+const { getConnection } = require('../../salesforce-service/salesforce');
 
-jest.mock('../salesforce');
+jest.mock('../../salesforce-service/salesforce');
 
 beforeEach(() => {
     jest.clearAllMocks();
