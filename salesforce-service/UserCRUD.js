@@ -37,7 +37,7 @@ class UserService {
           
           if (result) {
               const user = result[0];
-              const userToUpdate = { Id: user.Id };
+              const userToUpdate = { uid: user.uid };
               for (const [key, value] of Object.entries(userData)) {
                 if (value !== null) {
                     userToUpdate[key] = value;
