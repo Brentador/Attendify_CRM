@@ -46,7 +46,7 @@ jobs:
             # start containers
             docker compose -f docker-compose-testing.yml up --build -d
 
-            sleep 15
+            sleep 10
             docker compose logs crm_salesforce_testing_consumers
 
 
