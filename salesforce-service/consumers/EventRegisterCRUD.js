@@ -1,14 +1,30 @@
-const { getConnection } = require('../salesforce'); // Pas pad aan indien nodig
+const { getConnection } = require('../salesforce');
 
 class EventRegistrationService {
-  // 📌 Create an event registration
+  // 🔎 Helper om Salesforce ID op te halen via uid__c
+  static async getSalesforceId(objectType, uid) {
+    const conn = await getConnection();
+    const result = await conn.query(`
+      SELECT Id FROM ${objectType} WHERE uid__c = '${uid}' LIMIT 1
+    `);
+    return result.records[0]?.Id || null;
+  }
+
+  // 📌 Create an event registration (via uid)
   static async createRegistration(data) {
     try {
       const conn = await getConnection();
 
+      const userId = await this.getSalesforceId('Users_CRM__c', data.user_uid);
+      const eventId = await this.getSalesforceId('Eventcrm__c', data.event_uid);
+
+      if (!userId || !eventId) {
+        throw new Error('❌ User or Event not found using uid__c');
+      }
+
       const result = await conn.sobject('Event_Registration__c').create({
-        user__c: data.user_id,
-        Event_crm__c: data.event_id
+        user__c: userId,
+        Event_crm__c: eventId
       });
 
       console.log('✅ Event registration created:', result);
@@ -19,10 +35,15 @@ class EventRegistrationService {
     }
   }
 
-  // 📌 Read a registration by user + event combo
-  static async getRegistrationByUserAndEvent(userId, eventId) {
+  // 📌 Get registration by user_uid and event_uid
+  static async getRegistrationByUserAndEvent(userUid, eventUid) {
     try {
       const conn = await getConnection();
+
+      const userId = await this.getSalesforceId('Users_CRM__c', userUid);
+      const eventId = await this.getSalesforceId('Eventcrm__c', eventUid);
+
+      if (!userId || !eventId) return null;
 
       const result = await conn.query(`
         SELECT Id, user__c, Event_crm__c
@@ -38,12 +59,12 @@ class EventRegistrationService {
     }
   }
 
-  // 📌 Update a registration
+  // 📌 Update a registration using UID
   static async updateRegistration(data) {
     try {
       const conn = await getConnection();
 
-      const existing = await this.getRegistrationByUserAndEvent(data.user_id, data.event_id);
+      const existing = await this.getRegistrationByUserAndEvent(data.user_uid, data.event_uid);
       if (!existing) {
         return { success: false, message: 'Registration not found' };
       }
@@ -61,12 +82,12 @@ class EventRegistrationService {
     }
   }
 
-  // 📌 Delete a registration
-  static async deleteRegistration(userId, eventId) {
+  // 📌 Delete a registration using UID
+  static async deleteRegistration(userUid, eventUid) {
     try {
       const conn = await getConnection();
 
-      const existing = await this.getRegistrationByUserAndEvent(userId, eventId);
+      const existing = await this.getRegistrationByUserAndEvent(userUid, eventUid);
       if (!existing) {
         return { success: false, message: 'Registration not found' };
       }
