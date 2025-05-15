@@ -1,3 +1,7 @@
+networks:
+  attendify_net_testing:
+    external: true
+
 services:
   crm_salesforce_testing_consumers:
     build:
