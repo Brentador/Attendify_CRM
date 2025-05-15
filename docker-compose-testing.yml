@@ -1,14 +1,10 @@
-networks:
-  attendify_net:
-    external: true
-
 services:
   crm_salesforce_testing_consumers:
     build:
       context: .
       dockerfile: Dockerfile.consumers
     networks:
-      - attendify_net
+      - attendify_net_testing
     env_file:
       - .env
     container_name: crm_salesforce_testing_consumers
@@ -19,7 +15,7 @@ services:
       context: .
       dockerfile: Dockerfile.producers
     networks:
-      - attendify_net
+      - attendify_net_testing
     env_file:
       - .env
     container_name: crm_salesforce_testing_producers
