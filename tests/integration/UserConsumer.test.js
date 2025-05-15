@@ -2,19 +2,20 @@ const amqp = require('amqplib');
 const UserCRUD = require('../../salesforce-service/UserCRUD');
 const connectRabbitmq = require('../../salesforce-service/rabbitmq');
 
-jest.mock('../../salesforce-service/UserCRUD', () => ({
-    createUser: jest.fn(),
-    updateUser: jest.fn(),
-    deleteUser: jest.fn(),
-    getUserByUid: jest.fn(),}));
+jest.mock('../../salesforce-service/UserCRUD');
+
 
 
 describe('Consumer Tests', () => {
     let connection, channel
+    const createUser = jest.fn()
+    const updateUser = jest.fn()
+    const deleteUser = jest.fn()
+    const getUserByUid = jest.fn()
 
     beforeAll(async () => {
         connection = await connectRabbitmq();
-        channel = await connection.createChannel();
+        channel = await connection.createChannel();    
     });
 
     afterEach(() => {
@@ -44,12 +45,19 @@ describe('Consumer Tests', () => {
             </user>
         </attendify>`;
 
-        UserCRUD.createUser.mockResolvedValue({ success: true });
+        UserCRUD.createUser.mockResolvedValueOnce(xml);
 
         channel.sendToQueue('crm.user', Buffer.from(xml), { persistent: true });
         await new Promise(resolve => setTimeout(resolve, 100));
 
-        expect(UserCRUD.createUser).toHaveBeenCalledWith(expect.objectContaining({
+        // expect(UserCRUD.createUser).toHaveBeenCalledWith(expect.objectContaining({
+        // email__c: 'test@example.com',
+        // first_name__c: 'Zena',
+        // last_name__c: 'Bollaerts',
+        // title__c: 'Ms.',
+        // uid__c: 'SF123456789'
+        // }));
+        expect(createUser).toHaveBeenCalledWith(expect.objectContaining({
         email__c: 'test@example.com',
         first_name__c: 'Zena',
         last_name__c: 'Bollaerts',
