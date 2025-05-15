@@ -1,4 +1,4 @@
-const EventRegistrationService = require('../EventRegisterCRUD');
+const EventRegistrationService = require('./EventRegisterCRUD');
 const { getUserId, getEventId } = require('../salesforce');
 const { parseStringPromise } = require('xml2js');
 const connectRabbitmq = require('../rabbitmq');

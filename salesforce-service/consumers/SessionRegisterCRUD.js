@@ -1,4 +1,4 @@
-const { getConnection } = require('./salesforce'); // Pas pad aan indien nodig
+const { getConnection } = require('../salesforce'); // Pas pad aan indien nodig
 
 class SessionRegistrationService {
   // 📌 Create a session registration

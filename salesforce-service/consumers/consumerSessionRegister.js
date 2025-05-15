@@ -1,4 +1,4 @@
-const SessionRegistrationService = require('../SessionRegisterCRUD');
+const SessionRegistrationService = require('./SessionRegisterCRUD');
 const { getUserId, getSessionId } = require('../salesforce');
 const { parseStringPromise } = require('xml2js');
 const connectRabbitmq = require('../rabbitmq');

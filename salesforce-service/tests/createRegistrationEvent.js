@@ -1,4 +1,4 @@
-const EventRegistrationService = require('../EventRegisterCRUD');
+const EventRegistrationService = require('../consumers/EventRegisterCRUD');
 const { getUserId, getEventId } = require('../salesforce'); // Zorg dat deze helpers correct werken
 
 (async () => {

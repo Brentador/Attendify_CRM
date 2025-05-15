@@ -1,4 +1,4 @@
-const SessionRegistrationService = require('../SessionRegisterCRUD');
+const SessionRegistrationService = require('../consumers/SessionRegisterCRUD');
 const { getUserId, getSessionId } = require('../salesforce');
 
 (async () => {
