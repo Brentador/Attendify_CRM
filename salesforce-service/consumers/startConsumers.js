@@ -1,6 +1,8 @@
 const startUserConsumer = require('./consumerUser');
 const startEventConsumer = require('./consumerEvent');
 const startSessionConsumer = require('./consumerSession');
+const startEventRegisterConsumer = require('./consumerEventRegister');
+const startSessionRegisterConsumer = require('./consumerSessionRegister');
 
 async function startConsumers(){
     try {
@@ -8,6 +10,8 @@ async function startConsumers(){
         await startUserConsumer();
         await startEventConsumer();
         await startSessionConsumer();
+        await startEventRegisterConsumer();
+        await startSessionRegisterConsumer();
 
         console.log('All consumers started successfully.');
     } catch (error) {
