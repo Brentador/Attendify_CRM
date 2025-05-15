@@ -7,8 +7,8 @@
     "consume": "node indexConsumers.js",
     "produce": "node indexProducers.js",
     "test": "jest",
-    "test:unit": "jest --testMatch=**/tests/unit/**/*.test.js",
-    "test:integration": "jest --testMatch=**/tests/integration/**/*.test.js"
+    "test:unit": "jest --testPathPattern=tests/unit",
+    "test:integration": "jest --testPathPattern=tests/integration"
   },
   "keywords": [],
   "author": "",
