@@ -74,4 +74,13 @@ async function startConsumer() {
     }
 }
 
-module.exports = startConsumer;
+async function stopConsumer(connection){
+    try{
+        await connection.close();
+        exit();
+    } catch(error){
+        exit();
+    }
+}
+
+module.exports = { startConsumer, stopConsumer };
