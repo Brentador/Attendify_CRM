@@ -53,12 +53,13 @@ describe('UserCRUD.createUser', () => {
 describe('UserCRUD.updateUser', () => {
     const userData = {
         email__c: 'test@example.com',
-        first_name__c: 'Updated'
+        first_name__c: 'Updated',
+        uid__c: 'SF123456789'
     };
 
     it('should update a user', async () => {
         const mockUpdate = jest.fn().mockResolvedValue({ success: true });
-        const mockExecute = jest.fn().mockResolvedValue([{ Id: '12345' }]);
+        const mockExecute = jest.fn().mockResolvedValue([{ uid: 'SF123456789' }]);
         const mockFind = jest.fn(() => ({ execute: mockExecute }));
         getConnection.mockResolvedValue({ 
             sobject: () => ({ 
@@ -72,7 +73,7 @@ describe('UserCRUD.updateUser', () => {
         expect(getConnection).toHaveBeenCalledTimes(1);
         expect(mockFind).toHaveBeenCalledWith({ uid__c: userData.uid__c });
         expect(mockExecute).toHaveBeenCalled();
-        expect(mockUpdate).toHaveBeenCalledWith({ Id: '12345', ...userData });
+        expect(mockUpdate).toHaveBeenCalledWith({ uid: 'SF123456789', ...userData });
         expect(result).toEqual({ success: true });
 
     });
@@ -96,7 +97,7 @@ describe('UserCRUD.updateUser', () => {
 
     it('should handle errors during update', async () => {
         const mockFind = jest.fn().mockImplementation(() => ({
-            execute: jest.fn().mockResolvedValue([{ Id: '12345' }]),
+            execute: jest.fn().mockResolvedValue([{ uid: 'SF123456789' }]),
         }));
         const mockUpdate = jest.fn().mockRejectedValue(new Error('Update error'));
         getConnection.mockResolvedValue({
@@ -110,7 +111,7 @@ describe('UserCRUD.updateUser', () => {
 
         expect(getConnection).toHaveBeenCalledTimes(1);
         expect(mockFind).toHaveBeenCalledWith({ uid__c: userData.uid__c });
-        expect(mockUpdate).toHaveBeenCalledWith({ Id: '12345', ...userData });
+        expect(mockUpdate).toHaveBeenCalledWith({ uid: 'SF123456789', ...userData });
         expect(result).toBeUndefined();
     });
 
