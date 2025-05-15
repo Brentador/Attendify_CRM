@@ -77,6 +77,18 @@ class UserService {
         return { success: false, message: 'Error deleting user', error };
       }
     }
-}
+    static async getUserByUid(uid){
+      try{
+        const conn = await getConnection();
+        const result = await conn.sobject('Users_CRM__c')
+        .find({ uid__c: uid })
+        return result[0];
+      } catch (error) {
+        console.error('Error in getting user by uid:', error);
+        return null;
+      }
+    }
+  }
+   
 
 module.exports = UserService;

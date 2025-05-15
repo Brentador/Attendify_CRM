@@ -46,11 +46,11 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
           
-      - name: Deploy and Build on Server
+      - name: Deploy and Build on production Server
         run: |
           ssh -o StrictHostKeyChecking=no -p ${{ secrets.PROD_SSH_PORT }} ${{ secrets.PROD_SSH_USERNAME }}@${{ secrets.PROD_SSH_HOST }} << 'EOF'
             set -e
-            cd ~/attendify/test-environment/testing-CRM/Attendify_CRM
+            cd ~/attendify/Attendify_CRM
             git pull origin main
 
             # start containers

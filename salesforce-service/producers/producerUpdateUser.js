@@ -34,7 +34,7 @@ async function checkUpdatedUsers() {
     } catch (error) {
         console.error('Error in producer:', error);
     }
-
+}
 
     function mapXML(userXML) {
         const mappedUserXML = {
@@ -95,5 +95,5 @@ async function checkUpdatedUsers() {
         }
         return mappedUserXML;
     }
-}
+
 module.exports = checkUpdatedUsers;

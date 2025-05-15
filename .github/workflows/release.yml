@@ -31,7 +31,26 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
+          
+      - name: Deploy and Build on test Server
+        run: |
+          ssh -o StrictHostKeyChecking=no -p ${{ secrets.PROD_SSH_PORT }} ${{ secrets.PROD_SSH_USERNAME }}@${{ secrets.PROD_SSH_HOST }} << 'EOF'
+            set -e
+            cd ~/attendify/test-environment/testing-CRM/Attendify_CRM
+            git pull origin release
 
-      - name: Run tests
-        run: npm run test:integration
+            # start containers
+            docker compose -f docker-compose-testing.yml up --build -d
+
+            sleep 10
+
+            # run tests
+            docker compose exec crm_salesforce_testing_consumers npm run test:integration || exit 1
+
+
+          EOF
 

@@ -11,7 +11,7 @@ services:
       - attendify_net
     env_file:
       - .env
-    container_name: crm_salesforce_consumers
+    container_name: crm_salesforce_testing_consumers
 
     
   crm_producers:
@@ -22,4 +22,4 @@ services:
       - attendify_net
     env_file:
       - .env
-    container_name: crm_salesforce_producers
+    container_name: crm_salesforce_testing_producers

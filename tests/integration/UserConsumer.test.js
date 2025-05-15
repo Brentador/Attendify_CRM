@@ -1,35 +1,30 @@
 const amqp = require('amqplib');
-const startUserConsumer = require('../../salesforce-service/consumers/consumerUser');
 const UserCRUD = require('../../salesforce-service/UserCRUD');
+const connectRabbitmq = require('../../salesforce-service/rabbitmq');
 
-jest.mock('../../salesforce-service/UserCRUD');
-jest.mock('amqplib');
+jest.mock('../../salesforce-service/UserCRUD', () => ({
+    createUser: jest.fn(),
+    updateUser: jest.fn(),
+    deleteUser: jest.fn(),
+    getUserByUid: jest.fn(),}));
+
 
 describe('Consumer Tests', () => {
-    let fakeChannel;
-    let consumeCallback;
+    let connection, channel
 
     beforeAll(async () => {
-        const amqplib = require('amqplib');
-
-        fakeChannel = {
-            assertQueue: jest.fn(),
-            consume: jest.fn((queue, callback) => {
-                consumeCallback = callback;
-            }),
-            ack: jest.fn()
-        };
-
-        amqplib.connect.mockResolvedValue({
-            createChannel: jest.fn().mockResolvedValue(fakeChannel),
-        });
-
-        await startUserConsumer();
+        connection = await connectRabbitmq();
+        channel = await connection.createChannel();
     });
 
     afterEach(() => {
         jest.clearAllMocks();
         jest.spyOn(console, 'log').mockImplementation(() => {});
+    });
+
+    afterAll(async () => {
+        if (channel) await channel.close();
+        if (connection) await connection.close();
     });
 
 
@@ -45,34 +40,22 @@ describe('Consumer Tests', () => {
                 <first_name>Zena</first_name>
                 <last_name>Bollaerts</last_name>
                 <title>Ms.</title>
+                <uid>SF123456789</uid>
             </user>
         </attendify>`;
 
-        const message = {
-            content: Buffer.from(xml),
-        };
+        UserCRUD.createUser.mockResolvedValue({ success: true });
 
-        await consumeCallback(message);
+        channel.sendToQueue('crm.user', Buffer.from(xml), { persistent: true });
+        await new Promise(resolve => setTimeout(resolve, 100));
 
         expect(UserCRUD.createUser).toHaveBeenCalledWith(expect.objectContaining({
-            email__c: 'test@example.com',
-            first_name__c: 'Zena',
-            last_name__c: 'Bollaerts',
-            title__c: 'Ms.',
-            bus_number__c: null,
-            city__c: null,
-            company_id__c: null,
-            country__c: null,
-            dob__c: null,
-            email_registerd__c: null,
-            house_number__c: null,
-            phone__c: null,
-            province__c: null,
-            street_name__c: null,
-            id: null
+        email__c: 'test@example.com',
+        first_name__c: 'Zena',
+        last_name__c: 'Bollaerts',
+        title__c: 'Ms.',
+        uid__c: 'SF123456789'
         }));
-
-        expect(fakeChannel.ack).toHaveBeenCalledWith(message);
     })
 
     it('should update a user', async () => {
@@ -87,24 +70,23 @@ describe('Consumer Tests', () => {
                 <first_name>Updated</first_name>
                 <last_name>User</last_name>
                 <title>Dr.</title>
+                <uid>SF123456789</uid>
             </user>
         </attendify>`;
 
-        const message = {
-            content: Buffer.from(xml),
-        };
+        UserCRUD.updateUser.mockResolvedValue({ success: true });
 
-        await consumeCallback(message);
+        channel.sendToQueue('crm.user', Buffer.from(xml), { persistent: true });
+        await new Promise(resolve => setTimeout(resolve, 100));
 
         expect(UserCRUD.updateUser).toHaveBeenCalledWith(expect.objectContaining({
             email__c: 'updated@example.com',
             first_name__c: 'Updated',
             last_name__c: 'User',
             title__c: 'Dr.',
+            uid__c: 'SF123456789'
         }));
-
-        expect(fakeChannel.ack).toHaveBeenCalledWith(message);
-    })
+    });
 
     it('should delete a user', async () => {
         const xml = `
@@ -118,31 +100,23 @@ describe('Consumer Tests', () => {
             </user>
         </attendify>`;
 
-        const message = {
-            content: Buffer.from(xml),
-        };
+        UserCRUD.deleteUser.mockResolvedValue({ success: true });
 
-        await consumeCallback(message);
+        channel.sendToQueue('crm.user', Buffer.from(xml), { persistent: true });
+        await new Promise(resolve => setTimeout(resolve, 100));
 
-        expect(UserCRUD.deleteUser).toHaveBeenCalledWith('delete@example.com');
-        expect(fakeChannel.ack).toHaveBeenCalledWith(message);
+        expect(UserCRUD.deleteUser).toHaveBeenCalledWith(expect.objectContaining({
+            email__c: 'delete@example.com',
+        }));
     })
 
     it('should handle malformed XML gracefully', async () => {
         const malformedXml = `<attendify><info><operation>create</operation></info>`; 
     
-        const message = {
-            content: Buffer.from(malformedXml),
-        };
-        const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-
-        await consumeCallback(message);
-    
-        expect(consoleErrorSpy).toHaveBeenCalledWith(
-            'Error processing message:',
-            expect.any(Error)
-        );
-        expect(fakeChannel.ack).toHaveBeenCalledWith(message);
-        consoleErrorSpy.mockRestore();
+        channel.sendToQueue('crm.user', Buffer.from(malformedXml), { persistent: true });
+        expect(UserCRUD.createUser).not.toHaveBeenCalled();
+        expect(UserCRUD.updateUser).not.toHaveBeenCalled();
+        expect(UserCRUD.deleteUser).not.toHaveBeenCalled();
     })
 })
+

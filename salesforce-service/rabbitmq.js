@@ -6,8 +6,8 @@ async function connectRabbitmq(){
     if (!connection) {
         connection = await amqp.connect({
             protocol: 'amqp',
-            hostname: 'rabbitmq',
-            port: 5672,
+            hostname: process.env.RABBITMQ_HOST,
+            port: process.env.RABBITMQ_PORT,
             username: 'attendify',
             password: process.env.RABBITMQ_PASSWORD,
             vhost: 'attendify',
