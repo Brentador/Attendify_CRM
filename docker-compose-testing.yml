@@ -3,7 +3,7 @@ networks:
     external: true
 
 services:
-  crm_consumers:
+  crm_salesforce_testing_consumers:
     build:
       context: .
       dockerfile: Dockerfile.consumers
@@ -14,7 +14,7 @@ services:
     container_name: crm_salesforce_testing_consumers
 
     
-  crm_producers:
+  crm_salesforce_testing_producers:
     build:
       context: .
       dockerfile: Dockerfile.producers
