@@ -46,8 +46,6 @@ jobs:
             # start containers
             docker compose -f docker-compose-testing.yml up --build -d
 
-            sleep 20
-
             # run tests
             docker compose exec crm_salesforce_testing_consumers npm run test:integration || exit 1
 
