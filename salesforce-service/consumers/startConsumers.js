@@ -13,7 +13,7 @@ async function startConsumers(){
         await startSessionConsumer();
         // await startEventRegisterConsumer();
         // await startSessionRegisterConsumer();
-        await startCompanyConsumer();
+        // await startCompanyConsumer();
 
         console.log('All consumers started successfully.');
     } catch (error) {
