@@ -13,10 +13,6 @@ async function startConsumer() {
         const channel =  await connection.createChannel();
         console.log('Connected to RabbitMQ2.');
 
-        //assert queue
-        channel.assertQueue("crm.user", { durable: true });
-        console.log(`Consumer is listening on queue: crm.user`);
-
         //consumer message from the queue
         channel.consume(
             "crm.user",
