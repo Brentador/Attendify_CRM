@@ -4,7 +4,7 @@ const { parseStringPromise } = require('xml2js');
 const connectRabbitmq = require('../rabbitmq');
 
 
-async function startConsumer() {
+async function startUserConsumer() {
     console.log('Starting consumer...');
     try{
         //connect to RabbitMQ server
@@ -70,7 +70,7 @@ async function startConsumer() {
     }
 }
 
-async function stopConsumer(connection){
+async function stopUserConsumer(connection){
     try{
         await connection.close();
         exit();
@@ -79,4 +79,4 @@ async function stopConsumer(connection){
     }
 }
 
-module.exports = { startConsumer, stopConsumer };
+module.exports = { startUserConsumer, stopUserConsumer };
