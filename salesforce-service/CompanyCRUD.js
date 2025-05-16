@@ -8,7 +8,7 @@ class CompanyService {
       `);
       return result.records[0]?.Id || null;
     }
-    
+
     static async createCompany(companyData) {
       try {
           const conn = await getConnection();
@@ -101,6 +101,10 @@ class CompanyService {
             const conn = await getConnection();
             const userId = await this.getSalesforceId('Users_CRM__c', companyRegisterData.uid);
             const companyId = await this.getSalesforceId('Company__c', companyRegisterData.company_id);
+            console.log('User ID:', userId);
+            console.log('Company ID:', companyId);
+            console.log('user uid:', companyRegisterData.uid);
+            console.log('company uid:', companyRegisterData.company_id);
 
             const result = await conn.sobject('Company_User__c').create({
                 user_uid__c: companyRegisterData.uid,
