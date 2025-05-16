@@ -6,19 +6,19 @@ describe('Consumer Tests', () => {
     let connection, channel
   
 
-    beforeAll(async () => {
-        connection = await connectRabbitmq();
-        channel = await connection.createChannel();
-    });
+    // beforeAll(async () => {
+    //     connection = await connectRabbitmq();
+    //     channel = await connection.createChannel();
+    // });
 
-    afterEach(() => {
-        jest.clearAllMocks();
-    });
+    // afterEach(() => {
+    //     jest.clearAllMocks();
+    // });
 
-    afterAll(async () => {
-        await channel.close();
-        await connection.close();
-    });
+    // afterAll(async () => {
+    //     await channel.close();
+    //     await connection.close();
+    // });
 
 
     it('should revieve a message from the rabbitMQ', async () => {
