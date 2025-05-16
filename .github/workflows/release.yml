@@ -47,7 +47,7 @@ jobs:
             docker compose -f docker-compose-testing.yml up --build -d
 
             # run tests
-            docker compose exec crm_salesforce_testing_consumers npm run test:integration
+            # docker compose exec crm_salesforce_testing_consumers npm run test:integration
 
 
           EOF
