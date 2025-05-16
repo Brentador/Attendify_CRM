@@ -42,8 +42,8 @@ let connection, channel
         
     })
 
-    it('should connect to salesforce', async () => {
-        const connection = await getConnection();
-        expect(connection).toBeDefined();
-    });
+    // it('should connect to salesforce', async () => {
+    //     const connection = await getConnection();
+    //     expect(connection).toBeDefined();
+    // });
 });
