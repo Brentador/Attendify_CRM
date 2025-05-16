@@ -2,7 +2,6 @@ const CompanyCRUD = require('../CompanyCRUD');
 const { parseStringPromise } = require('xml2js');
 const connectRabbitmq = require('../rabbitmq');
 
-
 async function startCompanyConsumer() {
     console.log('Starting consumer...');
     try{
