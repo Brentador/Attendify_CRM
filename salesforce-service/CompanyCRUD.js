@@ -99,16 +99,16 @@ class CompanyService {
     static async registerCompany(companyRegisterData) {
         try {
             const conn = await getConnection();
-            const userId = await this.getSalesforceId('Users_CRM__c', companyRegisterData.uid);
-            const companyId = await this.getSalesforceId('Company__c', companyRegisterData.company_id);
+            const userId = await this.getSalesforceId('Users_CRM__c', companyRegisterData.user_uid__c);
+            const companyId = await this.getSalesforceId('Company__c', companyRegisterData.company_uid__c);
             console.log('User ID:', userId);
             console.log('Company ID:', companyId);
-            console.log('user uid:', companyRegisterData.uid);
-            console.log('company uid:', companyRegisterData.company_id);
+            console.log('user uid:', companyRegisterData.user_uid__c);
+            console.log('company uid:', companyRegisterData.company_uid__c);
 
             const result = await conn.sobject('Company_User__c').create({
-                user_uid__c: companyRegisterData.uid,
-                company_uid__c: companyRegisterData.company_id,
+                user_uid__c: companyRegisterData.user_uid__c,
+                company_uid__c: companyRegisterData.company_uid__c,
                 User__c: userId,
                 Company__c: companyId
             });
