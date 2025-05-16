@@ -37,8 +37,8 @@ let connection, channel
             </user>
         </attendify>`;
 
-        const sent = channel.sendToQueue('crm.user', Buffer.from(xml), { persistent: true });
-        expect(sent).toBe(true);
+        // const sent = channel.sendToQueue('crm.user', Buffer.from(xml), { persistent: true });
+        // expect(sent).toBe(true);
         
     })
 

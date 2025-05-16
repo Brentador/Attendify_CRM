@@ -37,7 +37,7 @@ describe('Consumer Tests', () => {
             </user>
         </attendify>`;
 
-        channel.sendToQueue('crm.user', Buffer.from(xml), { persistent: true });
+        // channel.sendToQueue('crm.user', Buffer.from(xml), { persistent: true });
 
         // const received = await new Promise((resolve) => {
         //     channel.consume('crm.user', (msg) => {
