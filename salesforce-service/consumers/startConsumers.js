@@ -11,8 +11,8 @@ async function startConsumers(){
         await startUserConsumer();
         await startEventConsumer();
         await startSessionConsumer();
-        await startEventRegisterConsumer();
-        await startSessionRegisterConsumer();
+        // await startEventRegisterConsumer();
+        // await startSessionRegisterConsumer();
         await startCompanyConsumer();
 
         console.log('All consumers started successfully.');
