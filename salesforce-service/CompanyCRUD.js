@@ -1,6 +1,14 @@
 const { getConnection } = require('./salesforce');
 
 class CompanyService {
+    static async getSalesforceId(objectType, uid) {
+      const conn = await getConnection();
+      const result = await conn.query(`
+        SELECT Id FROM ${objectType} WHERE uid__c = '${uid}' LIMIT 1
+      `);
+      return result.records[0]?.Id || null;
+    }
+    
     static async createCompany(companyData) {
       try {
           const conn = await getConnection();
