@@ -26,7 +26,7 @@ class EventPaymentService {
             entrance_fee__c: eventPaymentData.entrance_fee__c,
             entrance_paid__c: eventPaymentData.entrance_paid__c,
             user_uid__c: eventPaymentData.user_uid__c,
-            event_uid__c: eventPaymentData.company_uid__c,
+            event_uid__c: eventPaymentData.event_uid__c,
             User__c: userId,
             Event__c: eventId,
             paid_at__c: eventPaymentData.paid_at__c,
@@ -37,15 +37,15 @@ class EventPaymentService {
       }
     }
 
-    static async createPayment(paymentData){
+    static async createPayment(PaymentData){
         try{
             const conn = await getConnection();
-            const userId = await this.getSalesforceId('Users_CRM__c', paymentData.user_uid__c);
-            const eventId = await this.getSalesforceId('Eventcrm__c', paymentData.event_uid__c);
+            const userId = await this.getSalesforceId('Users_CRM__c', PaymentData.user_uid__c);
+            const eventId = await this.getSalesforceId('Eventcrm__c', PaymentData.event_uid__c);
             return await conn.sobject('Payment_CRM__c').create({
-                user_uid__c: paymentData.user_uid__c,
-                event_uid__c: paymentData.event_uid__c,
-                timestamp__c: paymentData.timestamp__c,
+                user_uid__c: PaymentData.user_uid__c,
+                event_uid__c: PaymentData.event_uid__c,
+                timestamp__c: PaymentData.timestamp__c,
                 User__c: userId,
                 Event__c: eventId,
             });
