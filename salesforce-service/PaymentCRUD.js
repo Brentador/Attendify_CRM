@@ -64,7 +64,7 @@ class EventPaymentService {
                 Payment__c: paymentId,
                 item_name__c: itemData.item_name,
                 price__c: itemData.price,
-                item_quantity__c: itemData.quantity,
+                quantity__c: itemData.quantity,
             });
         } catch (error) {
             console.error('Error in linking item to payment:', error);
