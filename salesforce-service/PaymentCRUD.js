@@ -9,7 +9,7 @@ class EventPaymentService {
       return result.records[0]?.Id || null;
     }
 
-    static async getSalesforceId(objectType, user_uid, event_uid, timestamp) {
+    static async getAnotherSalesforceId(objectType, user_uid, event_uid, timestamp) {
       const conn = await getConnection();
       const result = await conn.query(`
         SELECT Id FROM ${objectType} WHERE user_uid__c = '${user_uid}' AND event_uid__c = '${event_uid}' AND timestamp__c = '${timestamp}' LIMIT 1
@@ -58,7 +58,7 @@ class EventPaymentService {
     static async linkItemToPayment(paymentData, itemData) {
         try {
             const conn = await getConnection();
-            const paymentId = await this.getSalesforceId('Payment_CRM__c', paymentData.user_uid__c, paymentData.event_uid__c, paymentData.timestamp__c);
+            const paymentId = await this.getAnotherSalesforceId('Payment_CRM__c', paymentData.user_uid__c, paymentData.event_uid__c, paymentData.timestamp__c);
             return await conn.sobject('Item__c').create({
                 Payment__c: paymentId,
                 item_name__c: itemData.item_name,
