@@ -9,6 +9,13 @@ class EventPaymentService {
       return result.records[0]?.Id || null;
     }
 
+    static async formatDateTimeForSOQL(dateString) {
+    if (!dateString.endsWith('Z')) {
+        return dateString + 'Z';
+    }
+    return dateString;
+}
+
     static async getAnotherSalesforceId(objectType, user_uid, event_uid, timestamp) {
       const conn = await getConnection();
       const result = await conn.query(`
