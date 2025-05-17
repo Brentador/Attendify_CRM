@@ -63,7 +63,7 @@ class EventPaymentService {
             return await conn.sobject('Item__c').create({
                 Payment__c: paymentId,
                 item_name__c: itemData.item_name,
-                item_price__c: itemData.price,
+                price__c: itemData.price,
                 item_quantity__c: itemData.quantity,
             });
         } catch (error) {
