@@ -21,7 +21,7 @@ async function startEventPaymentConsumer() {
 
 
                 const sender = parsedData.attendify.info.sender.toLowerCase();
-                if (sender == 'frontend '){
+                if (sender == 'frontend'){
                     console.log('Sender is frontend');
                     let eventPaymentData;
                         const eventPayment = parsedData.attendify.event_payment;
