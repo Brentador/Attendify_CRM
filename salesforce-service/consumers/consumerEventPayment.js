@@ -36,8 +36,8 @@ async function startEventPaymentConsumer() {
                         console.log('Event Payment Data:', eventPaymentData);
                 await PaymentCRUD.createEventPayment(eventPaymentData);
                 console.log('Event Payment created successfully');
-                } else if (sender == 'odoo'){
-                    console.log('Sender is odoo');
+                } else if (sender == 'pos'){
+                    console.log('Sender is pos');
                     let PaymentData;
                     const Payment = parsedData.attendify.tab;
                     console.log('Parsed XML data:', Payment);
