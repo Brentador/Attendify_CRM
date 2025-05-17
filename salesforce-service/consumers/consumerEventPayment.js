@@ -22,18 +22,22 @@ async function startEventPaymentConsumer() {
 
                 const sender = parsedData.attendify.info.sender.toLowerCase();
                 if (sender == 'frontend '){
-                let eventPaymentData;
-                    const eventPayment = parsedData.attendify.event_payment;
-                    console.log('Parsed XML data:', eventPayment);
-                    eventPaymentData = {
-                            entrance_fee__c: eventPayment.entrance_fee,
-                            entrance_paid__c: eventPayment.entrance_paid,
-                            user_uid__c: eventPayment.uid,
-                            event_uid__c: eventPayment.event_id,
-                            paid_at__c: eventPayment.paid_at
-                    };
+                    console.log('Sender is frontend');
+                    let eventPaymentData;
+                        const eventPayment = parsedData.attendify.event_payment;
+                        console.log('Parsed XML data:', eventPayment);
+                        eventPaymentData = {
+                                entrance_fee__c: eventPayment.entrance_fee,
+                                entrance_paid__c: eventPayment.entrance_paid,
+                                user_uid__c: eventPayment.uid,
+                                event_uid__c: eventPayment.event_id,
+                                paid_at__c: eventPayment.paid_at
+                        };
+                        console.log('Event Payment Data:', eventPaymentData);
                 await PaymentCRUD.createEventPayment(eventPaymentData);
+                console.log('Event Payment created successfully');
                 } else if (sender == 'odoo'){
+                    console.log('Sender is odoo');
                     let PaymentData;
                     const Payment = parsedData.attendify.tab;
                     console.log('Parsed XML data:', Payment);
@@ -42,7 +46,9 @@ async function startEventPaymentConsumer() {
                             event_uid__c: Payment.event_id,
                             timestamp__c: Payment.timestamp,
                     };
+                    console.log('Payment Data:', PaymentData);
                     await PaymentCRUD.createPayment(PaymentData);
+                    console.log('Payment created successfully');
 
                     const items = Payment.items?.tab_item;
                     if (items) {
@@ -54,6 +60,8 @@ async function startEventPaymentConsumer() {
                                 quantity: item.quantity,
                             };
                             await PaymentCRUD.linkItemToPayment(PaymentData, itemData);
+                            console.log('Item linked to payment successfully');
+                            console.log('Item Data:', itemData);
                         }
                     }
                 }
