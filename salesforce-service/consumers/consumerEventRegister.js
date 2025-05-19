@@ -10,7 +10,8 @@ async function startEventRegistrationConsumer() {
     const channel = await connection.createChannel();
 
     const queueName = "crm.registration.event";
-    console.log(`Listening on existing queue: ${queueName}`);
+    await channel.assertQueue(queueName, { durable: true });
+    console.log(`Listening on queue: ${queueName}`);
 
     channel.consume(queueName, async (message) => {
       if (!message) return;
@@ -42,7 +43,7 @@ async function startEventRegistrationConsumer() {
         const eventId = await getEventId(eventUid);
 
         if (!userId || !eventId) {
-          console.error(`❌ User or Event not found. userUid: ${userUid}, eventUid: ${eventUid}`);
+          console.error('❌ User or Event not found');
           channel.nack(message, false, false);
           return;
         }

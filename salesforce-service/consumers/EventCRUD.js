@@ -19,7 +19,7 @@ class EventService {
                 Organizer_Name__c: eventData.Organizer_Name__c,
                 Organizer_UID__c: eventData.Organizer_UID__c,
                 Entrance_Fee__c: eventData.Entrance_Fee__c,
-                uid__c: eventData.Uid__c
+                Uid__c: eventData.Uid__c
 
             };
 
@@ -62,11 +62,11 @@ class EventService {
             const conn = await getConnection();
 
             // 1. Find the record ID based on the Uid__c
-            const query = `SELECT Id FROM Eventcrm__c WHERE uid__c = '${eventData.Uid__c}' LIMIT 1`;
+            const query = `SELECT Id FROM Eventcrm__c WHERE Uid__c = '${eventData.Uid__c}' LIMIT 1`;
             const result = await conn.query(query);
 
             if (!result || result.records.length === 0) {
-                console.log(`No event found with uid__c: ${eventData.Uid__c}`);
+                console.log(`No event found with Uid__c: ${eventData.Uid__c}`);
                 return { success: false, message: 'Event not found' };
             }
 
@@ -93,7 +93,7 @@ class EventService {
 
             // Check if there is actually something to update (besides the Id)
             if (Object.keys(eventToUpdate).length <= 1) {
-                console.log(`No updateable fields provided for event with uid__c: ${eventData.Uid__c}`);
+                console.log(`No updateable fields provided for event with Uid__c: ${eventData.Uid__c}`);
                 return { success: true, message: 'No fields to update provided', id: eventId };
             }
 
@@ -102,7 +102,7 @@ class EventService {
             return await conn.sobject('Eventcrm__c').update(eventToUpdate);
 
         } catch (error) {
-            console.error(`Error in updating event with uid__c ${eventData.Uid__c}:`, error?.message || error);
+            console.error(`Error in updating event with Uid__c ${eventData.Uid__c}:`, error?.message || error);
             if (error.errorCode && error.fields) {
                 console.error(`Salesforce Error Code: ${error.errorCode}, Fields: ${error.fields.join(', ')}`);
             }
@@ -117,28 +117,28 @@ class EventService {
      */
     static async deleteEvent(eventUid) {
         if (!eventUid) {
-            return { success: false, message: 'Event uid__c is required for deletion.' };
+            return { success: false, message: 'Event Uid__c is required for deletion.' };
         }
         try {
             const conn = await getConnection();
 
             // Find the record ID based on the Uid__c
-            const query = `SELECT Id FROM Eventcrm__c WHERE uid__c = '${eventUid}'`;
+            const query = `SELECT Id FROM Eventcrm__c WHERE Uid__c = '${eventUid}'`;
             const result = await conn.query(query);
 
             if (result.records.length === 0) {
-                console.log(`No event found with uid__c: ${eventUid}`);
+                console.log(`No event found with Uid__c: ${eventUid}`);
                 return { success: false, message: 'Event not found' };
             }
 
             const eventId = result.records[0].Id;
 
             await conn.sobject('Eventcrm__c').destroy(eventId);
-            console.log(`Event with uid__c ${eventUid} (Id: ${eventId}) deleted successfully.`);
+            console.log(`Event with Uid__c ${eventUid} (Id: ${eventId}) deleted successfully.`);
             return { success: true, message: 'Event deleted successfully' };
 
         } catch (error) {
-            console.error(`Error deleting event with uid__c ${eventUid}:`, error?.message || error);
+            console.error(`Error deleting event with Uid__c ${eventUid}:`, error?.message || error);
             return { success: false, message: 'Error deleting event', error: error?.message || error };
         }
     }

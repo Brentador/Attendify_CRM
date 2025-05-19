@@ -10,7 +10,8 @@ async function startSessionRegistrationConsumer() {
     const channel = await connection.createChannel();
 
     const queueName = "crm.registration.session";
-    console.log(`Listening on existing queue: ${queueName}`);
+    await channel.assertQueue(queueName, { durable: true });
+    console.log(`Listening on queue: ${queueName}`);
 
     channel.consume(queueName, async (message) => {
       if (!message) return;
@@ -42,7 +43,7 @@ async function startSessionRegistrationConsumer() {
         const sessionId = await getSessionId(sessionUid);
 
         if (!userId || !sessionId) {
-          console.error(`❌ User or Session not found. userUid: ${userUid}, sessionUid: ${sessionUid}`);
+          console.error('❌ User or Session not found');
           channel.nack(message, false, false);
           return;
         }
