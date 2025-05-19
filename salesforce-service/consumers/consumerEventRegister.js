@@ -10,7 +10,20 @@ async function startEventRegistrationConsumer() {
     const channel = await connection.createChannel();
 
     const queueName = "crm.event.register";
-    console.log(`Listening on existing queue: ${queueName}`);
+    const exchanges = ["crm.event", "event.register"];
+
+    // Assert the queue (make sure it exists)
+    await channel.assertQueue(queueName, { durable: true });
+
+    // Assert the exchanges and bind the queue to each
+    for (const exchange of exchanges) {
+      await channel.assertExchange(exchange, 'direct', { durable: true });
+      // Bind the queue to the exchange with the routing key same as queueName
+      // Adjust the routing key if your routing differs
+      await channel.bindQueue(queueName, exchange, queueName);
+    }
+
+    console.log(`Listening on queue: ${queueName} bound to exchanges: ${exchanges.join(', ')}`);
 
     channel.consume(queueName, async (message) => {
       if (!message) return;
