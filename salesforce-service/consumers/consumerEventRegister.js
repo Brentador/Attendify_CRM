@@ -26,6 +26,8 @@ async function startEventRegistrationConsumer() {
           emptyTag: null,
         });
 
+        console.log('Parsed XML:', JSON.stringify(parsed, null, 2)); // Log de parsed XML
+
         const operation = parsed?.attendify?.info?.operation;
         const sender = parsed?.attendify?.info?.sender;
         const registration = parsed?.attendify?.event_attendee;
@@ -36,8 +38,9 @@ async function startEventRegistrationConsumer() {
           return;
         }
 
-        const userUid = registration.user_uid;
-        const eventUid = registration.event_uid;
+        // Gebruik de juiste namen van de velden in de XML
+        const userUid = registration.uid;
+        const eventUid = registration.event_id;
 
         const userId = await getUserId(userUid);
         const eventId = await getEventId(eventUid);
@@ -49,8 +52,8 @@ async function startEventRegistrationConsumer() {
         }
 
         const regData = {
-          user_id: userId,
-          event_id: eventId
+          user__c: userId, // Correcte naam
+          Event_crm__c: eventId // Correcte naam
         };
 
         if (sender.toLowerCase() !== 'crm') {
