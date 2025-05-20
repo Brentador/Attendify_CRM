@@ -10,23 +10,8 @@ async function startSessionRegistrationConsumer() {
     const channel = await connection.createChannel();
 
     const queueName = "crm.session.register";
-    const exchanges = ["crm.session", "session.register"];
 
-    // Assert the queue (make sure it exists and is durable)
-    await channel.assertQueue(queueName, { durable: true });
-
-    // Assert the exchanges and bind the queue to each exchange
-    for (const exchange of exchanges) {
-      await channel.assertExchange(exchange, "direct", { durable: true });
-      // Bind queue to exchange with routing key same as queueName (adjust if needed)
-      await channel.bindQueue(queueName, exchange, queueName);
-    }
-
-    console.log(
-      `Listening on queue: ${queueName} bound to exchanges: ${exchanges.join(
-        ", "
-      )}`
-    );
+    console.log(`Listening on existing queue: ${queueName}`);
 
     channel.consume(
       queueName,
@@ -73,18 +58,13 @@ async function startSessionRegistrationConsumer() {
           };
 
           if (sender.toLowerCase() !== "crm") {
-            console.log(
-              `➡️ Processing '${operation}' for Session Registration...`
-            );
+            console.log(`➡️ Processing '${operation}' for Session Registration...`);
             if (operation === "create") {
               await SessionRegistrationService.createRegistration(regData);
             } else if (operation === "update") {
               await SessionRegistrationService.updateRegistration(regData);
             } else if (operation === "delete") {
-              await SessionRegistrationService.deleteRegistration(
-                userId,
-                sessionId
-              );
+              await SessionRegistrationService.deleteRegistration(userId, sessionId);
             } else {
               console.warn(`❓ Unknown operation: ${operation}`);
             }
