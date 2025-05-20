@@ -10,20 +10,8 @@ async function startEventRegistrationConsumer() {
     const channel = await connection.createChannel();
 
     const queueName = "crm.event.register";
-    const exchanges = ["crm.event", "event.register"];
 
-    // Assert the queue (make sure it exists)
-    await channel.assertQueue(queueName, { durable: true });
-
-    // Assert the exchanges and bind the queue to each
-    for (const exchange of exchanges) {
-      await channel.assertExchange(exchange, 'direct', { durable: true });
-      // Bind the queue to the exchange with the routing key same as queueName
-      // Adjust the routing key if your routing differs
-      await channel.bindQueue(queueName, exchange, queueName);
-    }
-
-    console.log(`Listening on queue: ${queueName} bound to exchanges: ${exchanges.join(', ')}`);
+    console.log(`Listening on existing queue: ${queueName}`);
 
     channel.consume(queueName, async (message) => {
       if (!message) return;
@@ -40,7 +28,7 @@ async function startEventRegistrationConsumer() {
 
         const operation = parsed?.attendify?.info?.operation;
         const sender = parsed?.attendify?.info?.sender;
-        const registration = parsed?.attendify?.registration;
+        const registration = parsed?.attendify?.event_attendee;
 
         if (!operation || !sender || !registration) {
           console.error('Invalid structure in message');
