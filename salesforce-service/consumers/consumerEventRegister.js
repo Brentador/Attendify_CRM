@@ -63,7 +63,7 @@ async function startEventRegistrationConsumer() {
           } else if (operation === 'update') {
             await EventRegistrationService.updateRegistration(regData);
           } else if (operation === 'delete') {
-            await EventRegistrationService.deleteRegistration(userId, eventId);
+            await EventRegistrationService.deleteRegistration(userUid,eventUid);
           } else {
             console.warn(`❓ Unknown operation: ${operation}`);
           }

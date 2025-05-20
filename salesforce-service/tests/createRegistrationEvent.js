@@ -5,7 +5,7 @@ const { getUserId, getEventId } = require('../salesforce'); // Zorg dat deze hel
   try {
     // Vervang deze waarden met bestaande velden in je Salesforce data
     const userUid = '182';    // de 'uid__c' van de user in Users_CRM__c
-    const eventUid = '9';     // de 'uid__c' van het event in Eventcrm__c
+    const eventUid = 'GC94367240';     // de 'uid__c' van het event in Eventcrm__c
 
     console.log("User UID:", userUid); // Log de userUid
     console.log("Event UID:", eventUid); // Log de eventUid
