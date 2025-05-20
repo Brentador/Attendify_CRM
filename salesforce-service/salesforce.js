@@ -49,12 +49,12 @@ async function getUserId(userName) {
   try {
     const conn = await getConnection();
     const result = await conn.query(
-      `SELECT Id FROM Users_CRM__c WHERE uid__c = '${userName}'`
+      `SELECT Id FROM Users_CRM__c WHERE Name = '${userName}'`
     );
     if (result.records.length > 0) {
       return result.records[0].Id;
     } else {
-      throw new Error(`❌ No user found with uid__c = '${userName}'`);
+      throw new Error(`❌ No user found with Name = '${userName}'`);
     }
   } catch (error) {
     console.error('Error fetching user ID:', error);
