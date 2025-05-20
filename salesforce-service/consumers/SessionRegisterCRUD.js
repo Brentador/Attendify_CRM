@@ -10,7 +10,7 @@ class SessionRegistrationService {
     return result.records[0]?.Id || null;
   }
 
-  // 📌 Create a session registration
+  // 📌 Create a session registration 
   static async createRegistration(data) {
     try {
       const conn = await getConnection();
