@@ -15,11 +15,11 @@ class EventRegistrationService {
     try {
       const conn = await getConnection();
 
-      const userId = await this.getSalesforceId('Users_CRM__c', data.user_uid);
-      const eventId = await this.getSalesforceId('Eventcrm__c', data.event_uid);
+      const userId = data.user__c; // Gebruik de meegegeven user ID
+      const eventId = data.Event_crm__c; // Gebruik de meegegeven event ID
 
       if (!userId || !eventId) {
-        throw new Error('❌ User or Event not found using uid__c');
+        throw new Error('❌ User or Event ID missing in data'); // Verbeterde foutmelding
       }
 
       const result = await conn.sobject('Event_Registration__c').create({

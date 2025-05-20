@@ -30,7 +30,7 @@ async function startEventRegistrationConsumer() {
 
       try {
         const xml = message.content.toString();
-        console.log('📨 Received XML message:', xml);
+        console.log('Received XML message:', xml);
 
         const parsed = await parseStringPromise(xml, {
           explicitArray: false,
@@ -43,7 +43,7 @@ async function startEventRegistrationConsumer() {
         const registration = parsed?.attendify?.registration;
 
         if (!operation || !sender || !registration) {
-          console.error('❌ Invalid structure in message');
+          console.error('Invalid structure in message');
           channel.nack(message, false, false);
           return;
         }
@@ -55,7 +55,7 @@ async function startEventRegistrationConsumer() {
         const eventId = await getEventId(eventUid);
 
         if (!userId || !eventId) {
-          console.error(`❌ User or Event not found. userUid: ${userUid}, eventUid: ${eventUid}`);
+          console.error(`User or Event not found. userUid: ${userUid}, eventUid: ${eventUid}`);
           channel.nack(message, false, false);
           return;
         }
