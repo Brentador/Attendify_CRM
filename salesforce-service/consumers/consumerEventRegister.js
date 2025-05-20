@@ -28,7 +28,7 @@ async function startEventRegistrationConsumer() {
 
         const operation = parsed?.attendify?.info?.operation;
         const sender = parsed?.attendify?.info?.sender;
-        const registration = parsed?.attendify?.registration;
+        const registration = parsed?.attendify?.event_attendee;
 
         if (!operation || !sender || !registration) {
           console.error('❌ Invalid structure in message');
