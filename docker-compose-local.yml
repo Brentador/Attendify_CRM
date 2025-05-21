@@ -36,4 +36,6 @@ services:
         RABBITMQ_DEFAULT_VHOST: attendify
       ports:
         - "15672:15672"
-        - "5672:5672"
+        - "${RABBITMQ_PORT}:5672"
+      volumes:
+        - ./volumes/rabbitmq:/var/lib/rabbitmq
