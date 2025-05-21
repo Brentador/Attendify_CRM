@@ -128,8 +128,9 @@ class CompanyService {
                 company_uid__c: companyRegisterData.company_uid__c
             }, 'Id');
 
-            await conn.sobject('Company_User__c').destroy(recordId.Id);
+            const result = await conn.sobject('Company_User__c').destroy(recordId.Id);
             console.log('Company unregistered successfully:', result);
+            return result;
         } catch (error) {
             console.error('Error in unregistering company:', error);
             return null;
@@ -137,6 +138,5 @@ class CompanyService {
     }
 
   }
-   
 
 module.exports = CompanyService;
