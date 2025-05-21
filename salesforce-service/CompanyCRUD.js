@@ -62,28 +62,30 @@ class CompanyService {
       } 
     }
 
-    static async deleteCompany(uid){
-      try{
+    static async deleteCompany(uid) {
+      try {
         const conn = await getConnection();
-  
-        const query = `SELECT Id FROM Company__c WHERE uid__c = '${uid}'`
-        const result = await conn.query(query);
-  
-        if (result.records.length === 0){
-          console.log(`No company found with uid: ${uid}`)
-          return { success: false, message: 'Company not found' }
+
+        const result = await conn.sobject('Company__c')
+          .find({ uid__c: uid }, ['Id'])
+          .execute();
+
+        if (!result || result.length === 0) {
+          console.log(`No company found with uid: ${uid}`);
+          return { success: false, message: 'Company not found' };
         }
-  
-        const companyId = result.records[0].Id;
-  
+
+        const companyId = result[0].Id;
         await conn.sobject('Company__c').destroy(companyId);
+
         console.log(`Company with uid ${uid} deleted successfully.`);
         return { success: true, message: 'Company deleted successfully' };
-      }catch (error) {
+      } catch (error) {
         console.error(`Error deleting company with uid ${uid}:`, error);
         return { success: false, message: 'Error deleting company', error };
       }
     }
+
     static async getCompanyByUid(uid){
       try{
         const conn = await getConnection();
@@ -136,7 +138,6 @@ class CompanyService {
             return null;
         }
     }
-
   }
 
 module.exports = CompanyService;
