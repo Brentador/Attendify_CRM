@@ -28,16 +28,16 @@ async function startCompanyConsumer() {
                             b_number__c: company.billingAddress?.number || null,
                             b_postcode__c: company.billingAddress?.postcode || null,
                             b_street__c: company.billingAddress?.street || null,
-                            companyNumber__c: company.companyNumber,
-                            email__c: company.email,
-                            name__c: company.name,
-                            phone__c: company.phone,
-                            city__c: company.address.city,
-                            number__c: company.address.number,
-                            postcode__c: company.address.postcode,
-                            street__c: company.address.street,
+                            companyNumber__c: company.companyNumber || null,
+                            email__c: company.email || null,
+                            name__c: company.name || null,
+                            phone__c: company.phone || null,
+                            city__c: company.address.city || null,
+                            number__c: company.address.number || null,
+                            postcode__c: company.address.postcode || null,
+                            street__c: company.address.street || null,
                             uid__c: company.uid,
-                            VATNumber__c: company.VATNumber
+                            VATNumber__c: company.VATNumber || null,
                     };
                 } else if (operation == 'register' || operation == 'unregister') {
                     const companyRegister = parsedData.attendify.company_employee;
