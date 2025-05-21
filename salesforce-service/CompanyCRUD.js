@@ -44,7 +44,7 @@ class CompanyService {
           
           if (result) {
               const company = result[0];
-              const companyToUpdate = { uid: company.uid };
+              const companyToUpdate = { Id: company.Id };
               for (const [key, value] of Object.entries(companyData)) {
                 if (value !== null) {
                     companyToUpdate[key] = value;
