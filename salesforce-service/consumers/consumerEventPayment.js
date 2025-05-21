@@ -6,10 +6,7 @@ async function startEventPaymentConsumer() {
     console.log('Starting consumer event payment...');
     try{
         const connection = await connectRabbitmq();
-        console.log('Connected to RabbitMQ.');
         const channel =  await connection.createChannel();
-        console.log('Connected to RabbitMQ2.');
-
 
         channel.consume(
             "crm.sale",

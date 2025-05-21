@@ -11,8 +11,6 @@ async function startEventRegistrationConsumer() {
 
     const queueName = "crm.event.register";
 
-    console.log(`Listening on existing queue: ${queueName}`);
-
     channel.consume(queueName, async (message) => {
       if (!message) return;
 

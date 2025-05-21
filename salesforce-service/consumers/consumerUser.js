@@ -9,11 +9,8 @@ async function startUserConsumer() {
     try{
         //connect to RabbitMQ server
         const connection = await connectRabbitmq();
-        console.log('Connected to RabbitMQ.');
         const channel =  await connection.createChannel();
-        console.log('Connected to RabbitMQ2.');
 
-        //consumer message from the queue
         channel.consume(
             "crm.user",
             async (message) => {

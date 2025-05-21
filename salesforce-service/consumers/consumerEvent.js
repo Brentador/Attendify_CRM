@@ -11,14 +11,9 @@ async function startEventConsumer() {
         connection = await connectRabbitmq(); // Gebruik jouw helper
         const channel = await connection.createChannel();
 
-        // Assert queue
-        const queueName = "crm.event"; // Queue voor events
-        await channel.assertQueue(queueName, { durable: true });
-        console.log(`Event Consumer is listening on queue: ${queueName}`);
-
         // Consume message from the queue
         channel.consume(
-            queueName,
+            "crm.event",
             async (message) => {
                 if (message !== null) {
                     try {

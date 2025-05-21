@@ -11,8 +11,6 @@ async function startSessionConsumer() {
 
         // Assert queue
         const queueName = "crm.session";
-        await channel.assertQueue(queueName, { durable: true });
-        console.log(`Session Consumer is listening on queue: ${queueName}`);
 
         // Consume message from the queue
         channel.consume(queueName, async (message) => {
