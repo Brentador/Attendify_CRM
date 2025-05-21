@@ -3,7 +3,7 @@ const { parseStringPromise } = require('xml2js');
 const connectRabbitmq = require('../rabbitmq');
 
 async function startEventPaymentConsumer() {
-    console.log('Starting consumer...');
+    console.log('Starting consumer event payment...');
     try{
         const connection = await connectRabbitmq();
         console.log('Connected to RabbitMQ.');
@@ -81,9 +81,10 @@ async function startEventPaymentConsumer() {
 async function stopEventPaymentConsumer(connection){
     try{
         await connection.close();
-        exit();
-    } catch(error){
-        exit();
+        process.exit();
+    } catch (error) {
+        console.error('Error closing connection:', error);
+        process.exit();
     }
 }
 

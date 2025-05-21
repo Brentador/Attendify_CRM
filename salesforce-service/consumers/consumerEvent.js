@@ -9,9 +9,7 @@ async function startEventConsumer() {
     try {
         // Connect to RabbitMQ server
         connection = await connectRabbitmq(); // Gebruik jouw helper
-        console.log('Connected to RabbitMQ via helper.'); // Jouw log
         const channel = await connection.createChannel();
-        console.log('RabbitMQ channel created.'); // Jouw log
 
         // Assert queue
         const queueName = "crm.event"; // Queue voor events

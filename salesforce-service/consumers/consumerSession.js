@@ -7,9 +7,7 @@ async function startSessionConsumer() {
     try {
         // Connect to RabbitMQ server
         const connection = await connectRabbitmq();
-        console.log('Connected to RabbitMQ.');
         const channel = await connection.createChannel();
-        console.log('RabbitMQ channel created for Session Consumer.');
 
         // Assert queue
         const queueName = "crm.session";

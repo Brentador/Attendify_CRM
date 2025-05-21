@@ -5,7 +5,7 @@ const connectRabbitmq = require('../rabbitmq');
 
 
 async function startUserConsumer() {
-    console.log('Starting consumer...');
+    console.log('Starting consumer user...');
     try{
         //connect to RabbitMQ server
         const connection = await connectRabbitmq();
@@ -73,9 +73,10 @@ async function startUserConsumer() {
 async function stopUserConsumer(connection){
     try{
         await connection.close();
-        exit();
-    } catch(error){
-        exit();
+        process.exit();
+    } catch (error) {
+        console.error('Error closing connection:', error);
+        process.exit();
     }
 }
 
