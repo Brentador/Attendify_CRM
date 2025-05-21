@@ -3,7 +3,7 @@ const { parseStringPromise } = require('xml2js');
 const connectRabbitmq = require('../rabbitmq');
 
 async function startCompanyConsumer() {
-    console.log('Starting consumer company...');
+    console.log('Starting consumer: Company');
     try{
         const connection = await connectRabbitmq();
         const channel =  await connection.createChannel();
@@ -21,7 +21,7 @@ async function startCompanyConsumer() {
                 let companyData;
                 let companyRegisterData;
                 if (operation == 'create' || operation == 'update' || operation == 'delete') {
-                    const company = parsedData.attendify.companies.company;
+                    const company = parsedData.attendify.company;
                     console.log('Parsed XML data:', company);
                     companyData = {
                             b_city__c: company.billingAddress?.city || null,

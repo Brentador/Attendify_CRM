@@ -4,17 +4,13 @@ const { parseStringPromise } = require("xml2js");
 const connectRabbitmq = require("../rabbitmq");
 
 async function startSessionRegistrationConsumer() {
-  console.log("Starting Session Registration consumer...");
+  console.log("Starting consumer: Session Registration");
   try {
     const connection = await connectRabbitmq();
     const channel = await connection.createChannel();
 
-    const queueName = "crm.session.register";
-
-    console.log(`Listening on existing queue: ${queueName}`);
-
     channel.consume(
-      queueName,
+      "crm.session.register",
       async (message) => {
         if (!message) return;
 

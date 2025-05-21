@@ -3,7 +3,7 @@ const { parseStringPromise } = require('xml2js');
 const connectRabbitmq = require('../rabbitmq');
 
 async function startEventPaymentConsumer() {
-    console.log('Starting consumer event payment...');
+    console.log('Starting consumer: Event payment');
     try{
         const connection = await connectRabbitmq();
         const channel =  await connection.createChannel();

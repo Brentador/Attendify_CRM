@@ -3,7 +3,7 @@ const { parseStringPromise } = require('xml2js');
 const connectRabbitmq = require('../rabbitmq');
 
 async function startSessionConsumer() {
-    console.log('Starting Session consumer...');
+    console.log('Starting consumer: Session');
     try {
         // Connect to RabbitMQ server
         const connection = await connectRabbitmq();

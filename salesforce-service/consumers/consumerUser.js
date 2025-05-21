@@ -5,7 +5,7 @@ const connectRabbitmq = require('../rabbitmq');
 
 
 async function startUserConsumer() {
-    console.log('Starting consumer user...');
+    console.log('Starting consumer: User');
     try{
         //connect to RabbitMQ server
         const connection = await connectRabbitmq();
