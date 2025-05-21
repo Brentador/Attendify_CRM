@@ -1,0 +1,34 @@
+networks:
+  attendify_net_testing:
+    external: true
+
+services:
+  crm_salesforce_testing_consumers:
+    build:
+      context: .
+      dockerfile: Dockerfile.consumers
+    networks:
+      - attendify_net_testing
+    env_file:
+      - .env
+    container_name: crm_salesforce_testing_consumers
+
+    
+  crm_salesforce_testing_producers:
+    build:
+      context: .
+      dockerfile: Dockerfile.producers
+    networks:
+      - attendify_net_testing
+    env_file:
+      - .env
+    container_name: crm_salesforce_testing_producers
+
+  rabbitmq:
+      image: rabbitmq:4-management
+      container_name: some-rabbit
+      restart: always
+      environment:
+        RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+        RABBITMQ_DEFAULT_USER: attendify
+        RABBITMQ_DEFAULT_VHOST: attendify
