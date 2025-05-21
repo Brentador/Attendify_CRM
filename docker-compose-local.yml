@@ -28,6 +28,8 @@ services:
       image: rabbitmq:4-management
       container_name: some-rabbit
       restart: always
+      networks:
+        - attendify_net_testing
       environment:
         RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
         RABBITMQ_DEFAULT_USER: attendify
