@@ -9,7 +9,7 @@ async function startEventRegistrationConsumer() {
     const connection = await connectRabbitmq();
     const channel = await connection.createChannel();
 
-    const queueName = "crm.event.register";
+    const queueName = "crm.event";
 
     channel.consume(queueName, async (message) => {
       if (!message) return;
