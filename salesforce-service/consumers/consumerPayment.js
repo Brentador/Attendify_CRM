@@ -1,14 +1,12 @@
-const PaymentCRUD = require('../PaymentCRUD');
+const PaymentCRUD = require('../crud/PaymentCRUD');
 const { parseStringPromise } = require('xml2js');
 const connectRabbitmq = require('../rabbitmq');
 
-async function startEventPaymentConsumer() {
-    console.log('Starting consumer...');
+async function startPaymentConsumer() {
+    console.log('Starting payment consumer');
     try{
         const connection = await connectRabbitmq();
-        console.log('Connected to RabbitMQ.');
         const channel =  await connection.createChannel();
-        console.log('Connected to RabbitMQ2.');
 
 
         channel.consume(
@@ -20,15 +18,20 @@ async function startEventPaymentConsumer() {
                 console.log('Parsed XML data:', parsedData);
 
 
-                const sender = parsedData.attendify.info.sender.toLowerCase();
-                if (sender == 'frontend'){
-                    console.log('Sender is frontend');
+                const operation = parsedData.attendify.info.operation.toLowerCase();
+                if (operation == 'create_event_payment'){
                     let eventPaymentData;
-                        const eventPayment = parsedData.attendify.event_payment;
+                    let paid;
+                    const eventPayment = parsedData.attendify.event_payment;
+                    if(eventPayment.entrance_paid.trim().toLowerCase() === 'true'){
+                        paid = true;
+                    } else if (eventPayment.entrance_paid.trim().toLowerCase() == 'false'){
+                        paid = false;
+                    }
                         console.log('Parsed XML data:', eventPayment);
                         eventPaymentData = {
                                 entrance_fee__c: eventPayment.entrance_fee,
-                                entrance_paid__c: eventPayment.entrance_paid,
+                                entrance_paid__c: paid,
                                 user_uid__c: eventPayment.uid,
                                 event_uid__c: eventPayment.event_id,
                                 paid_at__c: eventPayment.paid_at
@@ -36,15 +39,21 @@ async function startEventPaymentConsumer() {
                         console.log('Event Payment Data:', eventPaymentData);
                 await PaymentCRUD.createEventPayment(eventPaymentData);
                 console.log('Event Payment created successfully');
-                } else if (sender == 'pos'){
-                    console.log('Sender is pos');
+                } else if (operation == 'create'){
                     let PaymentData;
                     const Payment = parsedData.attendify.tab;
                     console.log('Parsed XML data:', Payment);
+                    let paid;
+                    if(Payment.is_paid.trim().toLowerCase() === 'true'){
+                        paid = true;
+                    } else if (Payment.is_paid.trim().toLowerCase() == 'false'){
+                        paid = false;
+                    }
                     PaymentData = {
                             user_uid__c: Payment.uid,
                             event_uid__c: Payment.event_id,
                             timestamp__c: Payment.timestamp,
+                            is_paid__c: paid
                     };
                     console.log('Payment Data:', PaymentData);
                     await PaymentCRUD.createPayment(PaymentData);
@@ -77,13 +86,6 @@ async function startEventPaymentConsumer() {
     }
 }
 
-async function stopEventPaymentConsumer(connection){
-    try{
-        await connection.close();
-        exit();
-    } catch(error){
-        exit();
-    }
-}
 
-module.exports = { startEventPaymentConsumer, stopEventPaymentConsumer };
+
+module.exports = startPaymentConsumer;

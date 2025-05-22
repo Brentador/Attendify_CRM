@@ -1,4 +1,4 @@
-const { getConnection } = require('./salesforce');
+const { getConnection } = require('../salesforce');
 
 class EventPaymentService {
     static async getSalesforceId(objectType, uid) {
@@ -23,7 +23,7 @@ class EventPaymentService {
         const conn = await getConnection();
         const userId = await this.getSalesforceId('Users_CRM__c', eventPaymentData.user_uid__c);
         const eventId = await this.getSalesforceId('Eventcrm__c', eventPaymentData.event_uid__c);
-          return await conn.sobject('Event_Payment__c').create({
+          const result = await conn.sobject('Event_Payment__c').create({
             entrance_fee__c: eventPaymentData.entrance_fee__c,
             entrance_paid__c: eventPaymentData.entrance_paid__c,
             user_uid__c: eventPaymentData.user_uid__c,
@@ -32,6 +32,7 @@ class EventPaymentService {
             Event__c: eventId,
             paid_at__c: eventPaymentData.paid_at__c,
         });
+        console.log('Salesforce create result:', result);
       } catch (error) {
           console.error('Error in creating event:', error);
           return;
@@ -47,6 +48,7 @@ class EventPaymentService {
                 user_uid__c: PaymentData.user_uid__c,
                 event_uid__c: PaymentData.event_uid__c,
                 timestamp__c: PaymentData.timestamp__c,
+                is_paid__c: PaymentData.is_paid__c,
                 User__c: userId,
                 Event__c: eventId,
             });
@@ -72,6 +74,6 @@ class EventPaymentService {
         }
     }
 }
-    
+
 
 module.exports = EventPaymentService;
