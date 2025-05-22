@@ -1,7 +1,7 @@
 const SessionService = require('./SessionCRUD');
 const { parseStringPromise } = require('xml2js');
 const connectRabbitmq = require('../rabbitmq');
-const { getConnection } = require('./salesforce');
+const { getConnection } = require('../salesforce');
 
 // async function startSessionConsumer() {
 //     console.log('Starting Session consumer...');
@@ -107,7 +107,6 @@ const { getConnection } = require('./salesforce');
 
 // module.exports = startSessionConsumer;
 
-const { getConnection } = require('./salesforce');
 
 class SessionService {
     static async createSession(sessionData) {
