@@ -135,7 +135,7 @@ async function startSessionConsumer() {
                     console.log('Parsed XML data:', session);
                     sessionData = {
                             uid__c: session.uid,
-                            event_id__c: session.event_id,
+                            event_uid__c: session.event_id,
                             title__c: session.title,
                             description__c: session.description,
                             date__c: session.date,

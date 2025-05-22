@@ -128,7 +128,7 @@ class SessionService {
             start_time__c: sessionData.start_time__c,
             date__c: sessionData.date__c,
             title__c: sessionData.title__c,
-            event_uid__c: sessionData.event_id__c,
+            event_uid__c: sessionData.event_uid__c,
             uid__c: sessionData.uid__c,
             event__c: eventId,
 
