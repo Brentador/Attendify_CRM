@@ -106,11 +106,18 @@ const { getConnection } = require('../salesforce');
 
 
 class SessionService {
+    static async getSalesforceId(objectType, uid) {
+      const conn = await getConnection();
+      const result = await conn.query(`
+        SELECT Id FROM ${objectType} WHERE uid__c = '${uid}' LIMIT 1
+      `);
+      return result.records[0]?.Id || null;
+    }
+
     static async createSession(sessionData) {
       try {
         const conn = await getConnection();
-        const userId = await this.getSalesforceId('Users_CRM__c', sessionData.uid);
-        const eventId = await this.getSalesforceId('Eventvrm__c', sessionData.event_id);
+        const eventId = await this.getSalesforceId('Eventcrm__c', sessionData.event_id);
           return await conn.sobject('Session__c').create({
             description__c: sessionData.description,
             end_time__c: sessionData.end_time,
