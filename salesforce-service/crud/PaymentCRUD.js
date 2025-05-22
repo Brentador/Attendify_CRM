@@ -1,4 +1,4 @@
-const { getConnection } = require('./salesforce');
+const { getConnection } = require('../salesforce');
 
 class EventPaymentService {
     static async getSalesforceId(objectType, uid) {

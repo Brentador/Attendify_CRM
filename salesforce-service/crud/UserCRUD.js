@@ -1,4 +1,4 @@
-const { getConnection } = require('./salesforce');
+const { getConnection } = require('../salesforce');
 
 class UserService {
     static async createUser(userData) {

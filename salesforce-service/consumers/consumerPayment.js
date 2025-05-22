@@ -1,8 +1,8 @@
-const PaymentCRUD = require('../PaymentCRUD');
+const PaymentCRUD = require('../crud/PaymentCRUD');
 const { parseStringPromise } = require('xml2js');
 const connectRabbitmq = require('../rabbitmq');
 
-async function startEventPaymentConsumer() {
+async function startPaymentConsumer() {
     console.log('Starting consumer...');
     try{
         const connection = await connectRabbitmq();
@@ -34,7 +34,7 @@ async function startEventPaymentConsumer() {
                                 paid_at__c: eventPayment.paid_at
                         };
                         console.log('Event Payment Data:', eventPaymentData);
-                await PaymentCRUD.createEventPayment(eventPaymentData);
+                await PaymentCRUD.createPayment(eventPaymentData);
                 console.log('Event Payment created successfully');
                 } else if (sender == 'pos'){
                     console.log('Sender is pos');
@@ -77,13 +77,6 @@ async function startEventPaymentConsumer() {
     }
 }
 
-async function stopEventPaymentConsumer(connection){
-    try{
-        await connection.close();
-        exit();
-    } catch(error){
-        exit();
-    }
-}
 
-module.exports = { startEventPaymentConsumer, stopEventPaymentConsumer };
+
+module.exports = startPaymentConsumer;

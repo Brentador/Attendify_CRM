@@ -1,4 +1,4 @@
-const EventService = require('./EventCRUD');
+const EventService = require('../crud/EventCRUD');
 const { parseStringPromise } = require('xml2js');
 const connectRabbitmq = require('../rabbitmq');
 

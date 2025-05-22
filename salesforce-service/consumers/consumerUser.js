@@ -1,5 +1,4 @@
-//const amqp = require('amqplib');
-const UserCRUD = require('../UserCRUD');
+const UserCRUD = require('../crud/UserCRUD');
 const { parseStringPromise } = require('xml2js');
 const connectRabbitmq = require('../rabbitmq');
 

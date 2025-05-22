@@ -1,4 +1,4 @@
-const CompanyCRUD = require('../CompanyCRUD');
+const CompanyCRUD = require('../crud/CompanyCRUD');
 const { parseStringPromise } = require('xml2js');
 const connectRabbitmq = require('../rabbitmq');
 
