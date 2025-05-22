@@ -143,8 +143,8 @@ async function startSessionConsumer() {
                             end_time__c: session.end_time,
                             location__c: session.location,
                             max_attendees__c: session.max_attendees,
-                            speaker_name__c: session.speaker.name,
-                            speaker_bio__c: session.speaker.bio,
+                            speaker_name__c: session.speaker?.name || null,
+                            speaker_bio__c: session.speaker?.bio || null,
 
                     };
                 if(parsedData.attendify.info.sender.toLowerCase() != "crm"){
