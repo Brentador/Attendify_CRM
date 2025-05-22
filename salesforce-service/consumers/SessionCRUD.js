@@ -148,7 +148,7 @@ class SessionService {
               .find({ uid__c: sessionData.uid })
               .execute();
           
-          if (result) {
+          if (result && result.length > 0) {
             const session = result[0];
             const sessionToUpdate = { Id: session.Id };
               for (const [key, value] of Object.entries(sessionData)) {
@@ -162,7 +162,7 @@ class SessionService {
               return { success: false, message: 'session not found' };
           }
       } catch (error) {
-        console.error('Error in updating user:', error);
+        console.error('Error in updating session:', error);
         return;
       } 
     }
