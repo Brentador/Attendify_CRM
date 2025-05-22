@@ -21,11 +21,17 @@ async function startPaymentConsumer() {
                 const operation = parsedData.attendify.info.operation.toLowerCase();
                 if (operation == 'create_event_payment'){
                     let eventPaymentData;
-                        const eventPayment = parsedData.attendify.event_payment;
+                    let paid;
+                    const eventPayment = parsedData.attendify.event_payment;
+                    if(eventPayment.is_paid.trim().toLowerCase() === 'true'){
+                        paid = true;
+                    } else if (eventPayment.is_paid.trim().toLowerCase() == 'false'){
+                        paid = false;
+                    }
                         console.log('Parsed XML data:', eventPayment);
                         eventPaymentData = {
                                 entrance_fee__c: eventPayment.entrance_fee,
-                                entrance_paid__c: eventPayment.entrance_paid,
+                                entrance_paid__c: paid,
                                 user_uid__c: eventPayment.uid,
                                 event_uid__c: eventPayment.event_id,
                                 paid_at__c: eventPayment.paid_at
