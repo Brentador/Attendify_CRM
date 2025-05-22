@@ -120,7 +120,7 @@ class SessionService {
             start_date__c: sessionData.start_date,
             title__c: sessionData.title,
             uid__c: sessionData.uid,
-            uid_event__c: sessionData.uid_event,
+            uid_event__c: sessionData.event_id,
         });
       } catch (error) {
           console.error('Error in creating session:', error);
