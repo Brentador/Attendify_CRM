@@ -242,7 +242,7 @@ class EventService {
                 user_uid__c: eventRegisterData.user_uid__c,
                 event_uid__c: eventRegisterData.event_uid__c,
                 User__c: userId,
-                Event__c: eventId
+                Event_crm__c: eventId
             });
             console.log('Event registered successfully:', result);
             return result;
