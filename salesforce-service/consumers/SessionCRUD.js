@@ -150,7 +150,7 @@ class SessionService {
           
           if (result) {
             const session = result[0];
-            const sessionToUpdate = { uid: session.uid };
+            const sessionToUpdate = { Id: session.Id };
               for (const [key, value] of Object.entries(sessionData)) {
                 if (value !== null) {
                     sessionToUpdate[key] = value;
