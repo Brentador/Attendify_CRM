@@ -11,10 +11,8 @@ async function startConsumers(){
         await startUserConsumer();
         await startEventConsumer();
         await startSessionConsumer();
-        await startEventRegisterConsumer();
         await startCompanyConsumer();
         await startEventPaymentConsumer();
-
         console.log('All consumers started successfully.');
     } catch (error) {
         console.error('Error starting consumers:', error);
