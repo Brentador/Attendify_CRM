@@ -237,10 +237,6 @@ class EventService {
             const conn = await getConnection();
             const userId = await this.getSalesforceId('Users_CRM__c', eventRegisterData.user_uid__c);
             const eventId = await this.getSalesforceId('Eventcrm__c', eventRegisterData.event_uid__c);
-            console.log('User ID:', userId);
-            console.log('Event ID:', eventId);
-            console.log('user uid:', eventRegisterData.user_uid__c);
-            console.log('Event uid:', eventRegisterData.event_uid__c);
 
             const result = await conn.sobject('Event_registration__c').create({
                 user_uid__c: eventRegisterData.user_uid__c,
