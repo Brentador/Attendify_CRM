@@ -43,7 +43,7 @@ class UserService {
                     userToUpdate[key] = value;
                 }
               }
-              return await conn.sobject('Users_CRM__c').update(userToUpdate);
+              return await conn.sobject('Users_CRM__c').update(userToUpdate.Id);
             
           } else {
               console.log(`No user found with uid: ${userData.uid__c}`);
