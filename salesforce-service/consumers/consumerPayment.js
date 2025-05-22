@@ -23,9 +23,9 @@ async function startPaymentConsumer() {
                     let eventPaymentData;
                     let paid;
                     const eventPayment = parsedData.attendify.event_payment;
-                    if(eventPayment.is_paid.trim().toLowerCase() === 'true'){
+                    if(eventPayment.entrance_fee.trim().toLowerCase() === 'true'){
                         paid = true;
-                    } else if (eventPayment.is_paid.trim().toLowerCase() == 'false'){
+                    } else if (eventPayment.entrance_fee.trim().toLowerCase() == 'false'){
                         paid = false;
                     }
                         console.log('Parsed XML data:', eventPayment);
