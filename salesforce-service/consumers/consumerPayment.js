@@ -37,7 +37,7 @@ async function startPaymentConsumer() {
                                 paid_at__c: eventPayment.paid_at
                         };
                         console.log('Event Payment Data:', eventPaymentData);
-                await PaymentCRUD.createPayment(eventPaymentData);
+                await PaymentCRUD.createEventPayment(eventPaymentData);
                 console.log('Event Payment created successfully');
                 } else if (operation == 'create'){
                     let PaymentData;
