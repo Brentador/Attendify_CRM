@@ -3,13 +3,10 @@ const { parseStringPromise } = require('xml2js');
 const connectRabbitmq = require('../rabbitmq');
 
 async function startCompanyConsumer() {
-    console.log('Starting consumer...');
+    console.log('Starting consumer: Company');
     try{
         const connection = await connectRabbitmq();
-        console.log('Connected to RabbitMQ.');
         const channel =  await connection.createChannel();
-        console.log('Connected to RabbitMQ2.');
-
 
         channel.consume(
             "crm.company",
@@ -24,23 +21,23 @@ async function startCompanyConsumer() {
                 let companyData;
                 let companyRegisterData;
                 if (operation == 'create' || operation == 'update' || operation == 'delete') {
-                    const company = parsedData.attendify.companies.company;
+                    const company = parsedData.attendify.company;
                     console.log('Parsed XML data:', company);
                     companyData = {
                             b_city__c: company.billingAddress?.city || null,
                             b_number__c: company.billingAddress?.number || null,
                             b_postcode__c: company.billingAddress?.postcode || null,
                             b_street__c: company.billingAddress?.street || null,
-                            companyNumber__c: company.companyNumber,
-                            email__c: company.email,
-                            name__c: company.name,
-                            phone__c: company.phone,
-                            city__c: company.address.city,
-                            number__c: company.address.number,
-                            postcode__c: company.address.postcode,
-                            street__c: company.address.street,
+                            companyNumber__c: company.companyNumber || null,
+                            email__c: company.email || null,
+                            name__c: company.name || null,
+                            phone__c: company.phone || null,
+                            city__c: company.address?.city || null,
+                            number__c: company.address?.number || null,
+                            postcode__c: company.address?.postcode || null,
+                            street__c: company.address?.street || null,
                             uid__c: company.uid,
-                            VATNumber__c: company.VATNumber
+                            VATNumber__c: company.VATNumber || null,
                     };
                 } else if (operation == 'register' || operation == 'unregister') {
                     const companyRegister = parsedData.attendify.company_employee;
@@ -81,7 +78,8 @@ async function stopCompanyConsumer(connection){
     try{
         await connection.close();
         process.exit();
-    } catch{
+    } catch (error) {
+        console.error('Error closing connection:', error);
         process.exit();
     }
 }

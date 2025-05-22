@@ -12,6 +12,7 @@ services:
     env_file:
       - .env
     container_name: crm_salesforce_consumers
+    restart: always
 
     
   crm_salesforce_producers:
@@ -23,3 +24,4 @@ services:
     env_file:
       - .env
     container_name: crm_salesforce_producers
+    restart: always

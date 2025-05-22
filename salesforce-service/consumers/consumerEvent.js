@@ -1,26 +1,16 @@
-const EventService = require('./EventCRUD'); // Import EventService
+const EventService = require('./EventCRUD');
 const { parseStringPromise } = require('xml2js');
-const connectRabbitmq = require('../rabbitmq'); // Adjust the path as necessary
+const connectRabbitmq = require('../rabbitmq');
 
 async function startEventConsumer() {
-    console.log('Starting Event consumer...');
-    // Jouw RabbitMQ connectie logica:
-    let connection; // Behoud 'connection' in bredere scope voor sluiten in catch
+    console.log('Starting consumer: Event');
+    let connection;
     try {
-        // Connect to RabbitMQ server
-        connection = await connectRabbitmq(); // Gebruik jouw helper
-        console.log('Connected to RabbitMQ via helper.'); // Jouw log
+        connection = await connectRabbitmq();
         const channel = await connection.createChannel();
-        console.log('RabbitMQ channel created.'); // Jouw log
 
-        // Assert queue
-        const queueName = "crm.event"; // Queue voor events
-        await channel.assertQueue(queueName, { durable: true });
-        console.log(`Event Consumer is listening on queue: ${queueName}`);
-
-        // Consume message from the queue
         channel.consume(
-            queueName,
+            "crm.event",
             async (message) => {
                 if (message !== null) {
                     try {

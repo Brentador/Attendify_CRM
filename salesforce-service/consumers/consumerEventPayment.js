@@ -3,13 +3,10 @@ const { parseStringPromise } = require('xml2js');
 const connectRabbitmq = require('../rabbitmq');
 
 async function startEventPaymentConsumer() {
-    console.log('Starting consumer...');
+    console.log('Starting consumer: Event payment');
     try{
         const connection = await connectRabbitmq();
-        console.log('Connected to RabbitMQ.');
         const channel =  await connection.createChannel();
-        console.log('Connected to RabbitMQ2.');
-
 
         channel.consume(
             "crm.sale",
@@ -20,9 +17,9 @@ async function startEventPaymentConsumer() {
                 console.log('Parsed XML data:', parsedData);
 
 
-                const operation = parsedData.attendify.info.operation.toLowerCase();
-                if (operation == 'create_event_payment'){
-                    console.log('Operation is create_event_payment');
+                const sender = parsedData.attendify.info.sender.toLowerCase();
+                if (sender == 'frontend'){
+                    console.log('Sender is frontend');
                     let eventPaymentData;
                         const eventPayment = parsedData.attendify.event_payment;
                         console.log('Parsed XML data:', eventPayment);
@@ -36,8 +33,8 @@ async function startEventPaymentConsumer() {
                         console.log('Event Payment Data:', eventPaymentData);
                 await PaymentCRUD.createEventPayment(eventPaymentData);
                 console.log('Event Payment created successfully');
-                } else if (operation == 'create_item_payment'){
-                    console.log('Operation is create_item_payment');
+                } else if (sender == 'pos'){
+                    console.log('Sender is pos');
                     let PaymentData;
                     const Payment = parsedData.attendify.tab;
                     console.log('Parsed XML data:', Payment);
@@ -45,7 +42,6 @@ async function startEventPaymentConsumer() {
                             user_uid__c: Payment.uid,
                             event_uid__c: Payment.event_id,
                             timestamp__c: Payment.timestamp,
-                            is_payed__c: Payment.is_payed,
                     };
                     console.log('Payment Data:', PaymentData);
                     await PaymentCRUD.createPayment(PaymentData);
@@ -81,9 +77,10 @@ async function startEventPaymentConsumer() {
 async function stopEventPaymentConsumer(connection){
     try{
         await connection.close();
-        exit();
-    } catch(error){
-        exit();
+        process.exit();
+    } catch (error) {
+        console.error('Error closing connection:', error);
+        process.exit();
     }
 }
 

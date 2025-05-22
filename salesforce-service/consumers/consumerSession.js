@@ -3,18 +3,14 @@ const { parseStringPromise } = require('xml2js');
 const connectRabbitmq = require('../rabbitmq');
 
 async function startSessionConsumer() {
-    console.log('Starting Session consumer...');
+    console.log('Starting consumer: Session');
     try {
         // Connect to RabbitMQ server
         const connection = await connectRabbitmq();
-        console.log('Connected to RabbitMQ.');
         const channel = await connection.createChannel();
-        console.log('RabbitMQ channel created for Session Consumer.');
 
         // Assert queue
         const queueName = "crm.session";
-        await channel.assertQueue(queueName, { durable: true });
-        console.log(`Session Consumer is listening on queue: ${queueName}`);
 
         // Consume message from the queue
         channel.consume(queueName, async (message) => {
