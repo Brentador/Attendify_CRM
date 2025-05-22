@@ -39,11 +39,17 @@ async function startPaymentConsumer() {
                     let PaymentData;
                     const Payment = parsedData.attendify.tab;
                     console.log('Parsed XML data:', Payment);
+                    let paid;
+                    if(Payment.is_paid.trim().toLowerCase() === 'true'){
+                        paid = 1
+                    } else if (Payment.is_paid.trim().toLowerCase() == 'false'){
+                        paid = 0
+                    }
                     PaymentData = {
                             user_uid__c: Payment.uid,
                             event_uid__c: Payment.event_id,
                             timestamp__c: Payment.timestamp,
-                            is_paid__c: Payment.is_paid
+                            is_paid__c: paid
                     };
                     console.log('Payment Data:', PaymentData);
                     await PaymentCRUD.createPayment(PaymentData);
