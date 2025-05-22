@@ -1,7 +1,6 @@
 const { startUserConsumer } = require('./consumerUser');
 const startEventConsumer = require('./consumerEvent');
 const startSessionConsumer = require('./consumerSession');
-const startEventRegisterConsumer = require('./consumerEventRegister');
 const { startCompanyConsumer } = require('./consumerCompany');
 const { startEventPaymentConsumer } = require('./consumerEventPayment');
 
