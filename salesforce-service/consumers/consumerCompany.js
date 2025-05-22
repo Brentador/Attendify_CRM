@@ -33,10 +33,10 @@ async function startCompanyConsumer() {
                             email__c: company.email,
                             name__c: company.name,
                             phone__c: company.phone,
-                            city__c: company.address.city,
-                            number__c: company.address.number,
-                            postcode__c: company.address.postcode,
-                            street__c: company.address.street,
+                            city__c: company.address?.city || null,
+                            number__c: company.address?.number || null,
+                            postcode__c: company.address?.postcode || null,
+                            street__c: company.address?.street || null,
                             uid__c: company.uid,
                             VATNumber__c: company.VATNumber
                     };
