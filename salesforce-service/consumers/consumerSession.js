@@ -10,7 +10,6 @@ async function startSessionConsumer() {
         const channel =  await connection.createChannel();
         console.log('Connected to RabbitMQ2.');
 
-
         channel.consume(
             "crm.session",
             async (message) => {
