@@ -22,14 +22,14 @@ async function checkCreatedUsers() {
 
         client.setHeader('Authorization', `Bearer ${accessToken}`);
             console.log('Attempting to subscribe to created user channel');
-            void client.subscribe('/event/created_producer__e', (message) => {
+            void client.subscribe('/event/created_producer__e', async (message) => {
                 console.log('Received created user message:', message);
     
                 const user = message.payload;
                 console.log(`User created: ${user.email__c}`);
                 const builder = new Builder();
                 const plainTextPassword = generateString(12);
-                const hashedPassword = createPassword(plainTextPassword);
+                const hashedPassword = await createPassword(plainTextPassword);
                 const userMessage = builder.buildObject(mapXML(user, hashedPassword));
                 channel.publish("user-management", "user.register", Buffer.from(userMessage));
             });
