@@ -4,7 +4,9 @@ COPY package*.json ./
 RUN npm install
 COPY indexConsumers.js ./
 RUN mkdir -p salesforce-service/consumers
+RUN mkdir -p salesforce-service/crud
 COPY tests/integration/UserConsumer.test.js ./tests/integration/
-COPY salesforce-service/PaymentCRUD.js salesforce-service/CompanyCRUD.js salesforce-service/UserCRUD.js salesforce-service/salesforce.js salesforce-service/heartbeat.js salesforce-service/rabbitmq.js ./salesforce-service 
+COPY salesforce-service/salesforce.js salesforce-service/heartbeat.js salesforce-service/rabbitmq.js ./salesforce-service 
 COPY salesforce-service/consumers ./salesforce-service/consumers
+COPY salesforce-service/crud ./salesforce-service/crud
 CMD ["npm", "run", "consume"]
