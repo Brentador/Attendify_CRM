@@ -259,6 +259,7 @@ class EventService {
                 user_uid__c: eventRegisterData.user_uid__c,
                 event_uid__c: eventRegisterData.event_uid__c
             }, 'Id');
+            console.log('recordId:', recordId)
 
             await conn.sobject('Event_registration__c').destroy(recordId.Id);
         } catch (error) {
