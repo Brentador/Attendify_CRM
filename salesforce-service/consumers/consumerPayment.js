@@ -18,9 +18,8 @@ async function startPaymentConsumer() {
                 console.log('Parsed XML data:', parsedData);
 
 
-                const sender = parsedData.attendify.info.sender.toLowerCase();
-                if (sender == 'frontend'){
-                    console.log('Sender is frontend');
+                const operation = parsedData.attendify.info.operation.toLowerCase();
+                if (operation == 'create_event_payment'){
                     let eventPaymentData;
                         const eventPayment = parsedData.attendify.event_payment;
                         console.log('Parsed XML data:', eventPayment);
@@ -34,8 +33,7 @@ async function startPaymentConsumer() {
                         console.log('Event Payment Data:', eventPaymentData);
                 await PaymentCRUD.createPayment(eventPaymentData);
                 console.log('Event Payment created successfully');
-                } else if (sender == 'pos'){
-                    console.log('Sender is pos');
+                } else if (operation == 'create'){
                     let PaymentData;
                     const Payment = parsedData.attendify.tab;
                     console.log('Parsed XML data:', Payment);
