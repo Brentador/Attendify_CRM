@@ -23,10 +23,10 @@ async function checkCreatedUsers() {
         client.setHeader('Authorization', `Bearer ${accessToken}`);
             console.log('Attempting to subscribe to created user channel');
             void client.subscribe('/event/created_producer__e', async (message) => {
-                console.log('Received created user message:', message);
+                console.log('Received created user event:', message);
     
                 const user = message.payload;
-                console.log(`User created: ${user.email__c}`);
+                console.log(`User event: ${user.email__c}`);
                 const builder = new Builder();
                 const plainTextPassword = generateString(12);
                 const hashedPassword = await createPassword(plainTextPassword);
