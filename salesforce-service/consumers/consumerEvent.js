@@ -74,8 +74,8 @@ async function startEventConsumer() {
                         }
 
                         const salesforceData = {
-                            Uid__c: eventUid, // Van eventDetails.uid
-                            name_event__c: eventTitle, // Van eventDetails.title
+                            Uid__c: eventUid,
+                            name_event__c: eventTitle,
                             Address__c: eventDetails.location || null,
                             description__c: eventDetails.description || null,
                             Start_date__c: startDateSalesforce,
@@ -83,10 +83,6 @@ async function startEventConsumer() {
                             Organizer_Name__c: eventDetails.organizer_name || null,
                             Organizer_UID__c: eventDetails.organizer_uid || null,
                             Entrance_Fee__c: eventDetails.entrance_fee || null,
-                            // Als GCID__c bestaat in Salesforce en je wilt het mappen:
-                            // GCID__c: eventDetails.gcid || null,
-                            // Als max_attendees__c bestaat en je wilt het mappen:
-                            // max_attendees__c: eventDetails.max_attendees ? parseInt(eventDetails.max_attendees, 10) : null,
                         };
                         console.log('Mapped Salesforce Data:', JSON.stringify(salesforceData, null, 2));
 

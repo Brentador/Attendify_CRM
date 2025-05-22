@@ -8,7 +8,6 @@ const { startEventPaymentConsumer } = require('./consumerEventPayment');
 
 async function startConsumers(){
     try {
-        console.log('Starting all consumers...');
         await startUserConsumer();
         await startEventConsumer();
         await startSessionConsumer();
@@ -16,8 +15,6 @@ async function startConsumers(){
         await startSessionRegisterConsumer();
         await startCompanyConsumer();
         await startEventPaymentConsumer();
-
-        console.log('All consumers started successfully.');
     } catch (error) {
         console.error('Error starting consumers:', error);
     }
