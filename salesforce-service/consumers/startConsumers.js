@@ -13,7 +13,7 @@ async function startConsumers(){
         await startEventConsumer();
         await startSessionConsumer();
         await startEventRegisterConsumer();
-        await startSessionRegisterConsumer();
+        // await startSessionRegisterConsumer();
         await startCompanyConsumer();
         await startEventPaymentConsumer();
 
