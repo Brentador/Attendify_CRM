@@ -2,7 +2,7 @@ const { startUserConsumer } = require('./consumerUser');
 const startEventConsumer = require('./consumerEvent');
 const startSessionConsumer = require('./consumerSession');
 const { startCompanyConsumer } = require('./consumerCompany');
-const { startPaymentConsumer } = require('./consumerPayment');
+const startPaymentConsumer = require('./consumerPayment');
 
 async function startConsumers(){
     try {
