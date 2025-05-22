@@ -37,13 +37,13 @@ class UserService {
           
           if (result) {
               const user = result[0];
-              const userToUpdate = { uid: user.uid };
+              const userToUpdate = { Id: user.Id };
               for (const [key, value] of Object.entries(userData)) {
                 if (value !== null) {
                     userToUpdate[key] = value;
                 }
               }
-              return await conn.sobject('Users_CRM__c').update(userToUpdate.Id);
+              return await conn.sobject('Users_CRM__c').update(userToUpdate);
             
           } else {
               console.log(`No user found with uid: ${userData.uid__c}`);
