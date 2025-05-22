@@ -261,7 +261,6 @@ class EventService {
             }, 'Id');
 
             await conn.sobject('Event_registration__c').destroy(recordId.Id);
-            console.log('Event unregistered successfully:', result);
         } catch (error) {
             console.error('Error in unregistering event:', error);
             return null;

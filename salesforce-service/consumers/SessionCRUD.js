@@ -118,7 +118,6 @@ class SessionService {
             }, 'Id');
 
             await conn.sobject('Session_registration__c').destroy(recordId.Id);
-            console.log('Session unregistered successfully:', result);
         } catch (error) {
             console.error('Error in unregistering session:', error);
             return null;
