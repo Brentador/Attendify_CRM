@@ -189,7 +189,45 @@ class SessionService {
         return { success: false, message: 'Error deleting session', error };
       }
     }
+
+    static async registerSession(sessionRegisterData) {
+        try {
+            const conn = await getConnection();
+            const userId = await this.getSalesforceId('Users_CRM__c', sessionRegisterData.user_uid__c);
+            const sessionId = await this.getSalesforceId('Session__c', sessionRegisterData.session_uid__c);
+
+            const result = await conn.sobject('Session_registration__c').create({
+                user_uid__c: sessionRegisterData.user_uid__c,
+                session_uid__c: sessionRegisterData.session_uid__c,
+                User__c: userId,
+                Session__c: sessionId
+            });
+            console.log('Session registered successfully:', result);
+            return result;
+        } catch (error) {
+            console.error('Error in registering session:', error);
+            return null;
+        }
+    }
+
+    static async unregisterSession(sessionRegisterData) {
+        try {
+            const conn = await getConnection();
+            const recordId = await conn.sobject('Session_registration__c').findOne({
+                user_uid__c: sessionRegisterData.user_uid__c,
+                session_uid__c: sessionRegisterData.session_uid__c
+            }, 'Id');
+
+            await conn.sobject('Session_registration__c').destroy(recordId.Id);
+            console.log('Session unregistered successfully:', result);
+        } catch (error) {
+            console.error('Error in unregistering session:', error);
+            return null;
+        }
+    }
   }
+
+  
    
 
 module.exports = SessionService;
