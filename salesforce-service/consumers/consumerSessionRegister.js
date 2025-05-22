@@ -11,8 +11,6 @@ async function startSessionRegistrationConsumer() {
 
     const queueName = "crm.session";
 
-    console.log(`Listening on existing queue: ${queueName}`);
-
     channel.consume(
       queueName,
       async (message) => {
