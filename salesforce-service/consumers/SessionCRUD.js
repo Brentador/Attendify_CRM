@@ -145,7 +145,7 @@ class SessionService {
           const conn = await getConnection();
           
           const result = await conn.sobject('Session__c')
-              .find({ uid__c: sessionData.uid__c })
+              .find({ uid__c: sessionData.uid })
               .execute();
           
           if (result) {
