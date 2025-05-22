@@ -5,15 +5,12 @@ const connectRabbitmq = require('../rabbitmq');
 
 
 async function startUserConsumer() {
-    console.log('Starting consumer...');
+    console.log('Starting consumer: User');
     try{
         //connect to RabbitMQ server
         const connection = await connectRabbitmq();
-        console.log('Connected to RabbitMQ.');
         const channel =  await connection.createChannel();
-        console.log('Connected to RabbitMQ2.');
 
-        //consumer message from the queue
         channel.consume(
             "crm.user",
             async (message) => {
@@ -30,9 +27,9 @@ async function startUserConsumer() {
                 console.log('Parsed XML data:', user);
                 const userData = {
                         id: user?.id || null,
-                        email__c: user.email,
-                        first_name__c: user.first_name,
-                        last_name__c: user.last_name,
+                        email__c: user.email || null,
+                        first_name__c: user.first_name || null,
+                        last_name__c: user.last_name || null,
                         bus_number__c: user.address?.bus_number || null,
                         city__c: user.address?.city || null,
                         company_id__c: user.company?.id || null,
@@ -43,7 +40,7 @@ async function startUserConsumer() {
                         phone__c: user?.phone_number || null,
                         province__c: user.address?.province || null,
                         street_name__c: user.address?.street || null,
-                        title__c: user.title,
+                        title__c: user.title || null,
                         uid__c: user.uid,
                 };
 
@@ -73,9 +70,10 @@ async function startUserConsumer() {
 async function stopUserConsumer(connection){
     try{
         await connection.close();
-        exit();
-    } catch(error){
-        exit();
+        process.exit();
+    } catch (error) {
+        console.error('Error closing connection:', error);
+        process.exit();
     }
 }
 

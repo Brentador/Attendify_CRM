@@ -72,6 +72,6 @@ class EventPaymentService {
         }
     }
 }
-    
+
 
 module.exports = EventPaymentService;

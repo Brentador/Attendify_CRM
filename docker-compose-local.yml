@@ -25,3 +25,19 @@ services:
       - .env
     container_name: crm_salesforce_testing_producers
     restart: always
+
+  rabbitmq:
+      image: rabbitmq:4-management
+      container_name: some-rabbit
+      restart: always
+      networks:
+        - attendify_net_testing
+      environment:
+        RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+        RABBITMQ_DEFAULT_USER: attendify
+        RABBITMQ_DEFAULT_VHOST: attendify
+      ports:
+        - "15672:15672"
+        - "${RABBITMQ_PORT}:5672"
+      volumes:
+        - ./volumes/rabbitmq:/var/lib/rabbitmq
