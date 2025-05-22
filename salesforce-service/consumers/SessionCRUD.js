@@ -1,6 +1,7 @@
-// const SessionService = require('./SessionCRUD');
-// const { parseStringPromise } = require('xml2js');
-// const connectRabbitmq = require('../rabbitmq');
+const SessionService = require('./SessionCRUD');
+const { parseStringPromise } = require('xml2js');
+const connectRabbitmq = require('../rabbitmq');
+const { getConnection } = require('./salesforce');
 
 // async function startSessionConsumer() {
 //     console.log('Starting Session consumer...');
