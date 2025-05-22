@@ -119,17 +119,17 @@ class SessionService {
         const conn = await getConnection();
         const eventId = await this.getSalesforceId('Eventcrm__c', sessionData.event_id);
           return await conn.sobject('Session__c').create({
-            description__c: sessionData.description,
-            end_time__c: sessionData.end_time,
-            location__c: sessionData.location,
-            max_attendees__c: sessionData.max_attendees,
-            speaker_bio__c: sessionData.speaker_bio,
-            speaker_name__c: sessionData.speaker_name,
-            start_time__c: sessionData.start_time,
-            date__c: sessionData.date,
-            title__c: sessionData.title,
-            event_uid__c: sessionData.event_id,
-            uid__c: sessionData.uid,
+            description__c: sessionData.description__c,
+            end_time__c: sessionData.end_time__c,
+            location__c: sessionData.location__c,
+            max_attendees__c: sessionData.max_attendees__c,
+            speaker_bio__c: sessionData.speaker_bio__c,
+            speaker_name__c: sessionData.speaker_name__c,
+            start_time__c: sessionData.start_time__c,
+            date__c: sessionData.date__c,
+            title__c: sessionData.title__c,
+            event_uid__c: sessionData.event_id__c,
+            uid__c: sessionData.uid__c,
             event__c: eventId,
 
         });
@@ -145,7 +145,7 @@ class SessionService {
           const conn = await getConnection();
           
           const result = await conn.sobject('Session__c')
-              .find({ uid__c: sessionData.uid })
+              .find({ uid__c: sessionData.uid__c })
               .execute();
           
           if (result && result.length > 0) {

@@ -134,17 +134,17 @@ async function startSessionConsumer() {
                     const session = parsedData.attendify.session;
                     console.log('Parsed XML data:', session);
                     sessionData = {
-                            uid: session.uid,
-                            event_id: session.event_id,
-                            title: session.title,
-                            description: session.description,
-                            date: session.date,
-                            start_time: session.start_time,
-                            end_time: session.end_time,
-                            location: session.location,
-                            max_attendees: session.max_attendees,
-                            speaker_name: session.speaker.name,
-                            speaker_bio: session.speaker.bio,
+                            uid__c: session.uid,
+                            event_id__c: session.event_id,
+                            title__c: session.title,
+                            description__c: session.description,
+                            date__c: session.date,
+                            start_time__c: session.start_time,
+                            end_time__c: session.end_time,
+                            location__c: session.location,
+                            max_attendees__c: session.max_attendees,
+                            speaker_name__c: session.speaker.name,
+                            speaker_bio__c: session.speaker.bio,
 
                     };
                 if(parsedData.attendify.info.sender.toLowerCase() != "crm"){
@@ -153,7 +153,7 @@ async function startSessionConsumer() {
                     } else if (operation === 'update') {
                         await SessionService.updateSession(sessionData);
                     } else if (operation === 'delete') {
-                        await SessionService.deleteSession(sessionData.uid);
+                        await SessionService.deleteSession(sessionData.uid__c);
                     } else {
                         console.log('Invalid operation');
                     }
