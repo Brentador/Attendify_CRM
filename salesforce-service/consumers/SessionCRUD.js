@@ -195,6 +195,10 @@ class SessionService {
             const conn = await getConnection();
             const userId = await this.getSalesforceId('Users_CRM__c', sessionRegisterData.user_uid__c);
             const sessionId = await this.getSalesforceId('Session__c', sessionRegisterData.session_uid__c);
+            console.log('User ID:', userId);
+            console.log('Session ID:', sessionId);
+            console.log('user uid:', sessionRegisterData.user_uid__c);
+            console.log('Session uid:', sessionRegisterData.session_uid__c);
 
             const result = await conn.sobject('Session_registration__c').create({
                 user_uid__c: sessionRegisterData.user_uid__c,
