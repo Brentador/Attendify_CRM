@@ -129,7 +129,8 @@ async function startSessionConsumer() {
 
 
                 let sessionData;
-                
+                const operation = parsedData.attendify.info.operation;
+
                     const session = parsedData.attendify.session;
                     console.log('Parsed XML data:', session);
                     sessionData = {
