@@ -47,6 +47,7 @@ class EventPaymentService {
                 user_uid__c: PaymentData.user_uid__c,
                 event_uid__c: PaymentData.event_uid__c,
                 timestamp__c: PaymentData.timestamp__c,
+                is_paid__c: PaymentData.is_paid__c,
                 User__c: userId,
                 Event__c: eventId,
             });

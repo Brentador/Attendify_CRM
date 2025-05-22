@@ -43,6 +43,7 @@ async function startPaymentConsumer() {
                             user_uid__c: Payment.uid,
                             event_uid__c: Payment.event_id,
                             timestamp__c: Payment.timestamp,
+                            is_paid__c: Payment.is_paid
                     };
                     console.log('Payment Data:', PaymentData);
                     await PaymentCRUD.createPayment(PaymentData);
