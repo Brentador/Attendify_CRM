@@ -41,9 +41,9 @@ async function startPaymentConsumer() {
                     console.log('Parsed XML data:', Payment);
                     let paid;
                     if(Payment.is_paid.trim().toLowerCase() === 'true'){
-                        paid = 1
+                        paid = true;
                     } else if (Payment.is_paid.trim().toLowerCase() == 'false'){
-                        paid = 0
+                        paid = false;
                     }
                     PaymentData = {
                             user_uid__c: Payment.uid,
