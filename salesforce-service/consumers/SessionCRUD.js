@@ -108,20 +108,25 @@ const { getConnection } = require('../salesforce');
 class SessionService {
     static async createSession(sessionData) {
       try {
-          const conn = await getConnection();
+        const conn = await getConnection();
+        const userId = await this.getSalesforceId('Users_CRM__c', sessionData.uid);
+        const eventId = await this.getSalesforceId('Eventvrm__c', sessionData.event_id);
           return await conn.sobject('Session__c').create({
             description__c: sessionData.description,
-            end_date__c: sessionData.end_date,
+            end_time__c: sessionData.end_time,
             location__c: sessionData.location,
             max_attendees__c: sessionData.max_attendees,
-            Speaker__c: sessionData.Speaker,
             speaker_bio__c: sessionData.speaker_bio,
             speaker_name__c: sessionData.speaker_name,
-            start_date__c: sessionData.start_date,
+            start_time__c: sessionData.start_time,
+            date__c: sessionData.date,
             title__c: sessionData.title,
+            event_uid__c: sessionData.event_id,
             uid__c: sessionData.uid,
-            uid_event__c: sessionData.event_id,
+            event__c: eventId,
+
         });
+        
       } catch (error) {
           console.error('Error in creating session:', error);
           return;
@@ -133,22 +138,21 @@ class SessionService {
           const conn = await getConnection();
           
           const result = await conn.sobject('Session__c')
-              .find({ Uid_session__c: sessionData.uid__c })
+              .find({ uid__c: sessionData.uid__c })
               .execute();
           
           if (result) {
-              const session = result[0];
-              const userToUpdate = { uid: session.Uid_session };
+            const session = result[0];
+            const sessionToUpdate = { uid: session.uid };
               for (const [key, value] of Object.entries(sessionData)) {
                 if (value !== null) {
-                    userToUpdate[key] = value;
+                    sessionToUpdate[key] = value;
                 }
               }
-              return await conn.sobject('Session__c').update(userToUpdate);
-            
+              return await conn.sobject('Session__c').update(sessionToUpdate);
           } else {
-              console.log(`No user found with uid: ${sessionData.uid__c}`);
-              return { success: false, message: 'User not found' };
+              console.log(`No session found with uid: ${sessionData.uid}`);
+              return { success: false, message: 'session not found' };
           }
       } catch (error) {
         console.error('Error in updating user:', error);
@@ -160,12 +164,12 @@ class SessionService {
       try{
         const conn = await getConnection();
   
-        const query = `SELECT Id FROM Session__c WHERE Uid_session__c = '${uid}'`
+        const query = `SELECT Id FROM Session__c WHERE uid__c = '${uid}'`
         const result = await conn.query(query);
   
         if (result.records.length === 0){
           console.log(`No session found with uid: ${uid}`)
-          return { success: false, message: 'User not found' }
+          return { success: false, message: 'Session not found' }
         }
   
         const sessionId = result.records[0].Id;
@@ -176,17 +180,6 @@ class SessionService {
       }catch (error) {
         console.error(`Error deleting session with uid ${uid}:`, error);
         return { success: false, message: 'Error deleting session', error };
-      }
-    }
-    static async getSessionByUid(uid){
-      try{
-        const conn = await getConnection();
-        const result = await conn.sobject('Session__c')
-        .find({ Uid_session__c: uid })
-        return result[0];
-      } catch (error) {
-        console.error('Error in getting session by uid:', error);
-        return null;
       }
     }
   }
