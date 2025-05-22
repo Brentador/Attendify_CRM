@@ -110,17 +110,17 @@ class SessionService {
       try {
           const conn = await getConnection();
           return await conn.sobject('Session__c').create({
-            description__c: sessionData.description__c,
-            end_date__c: sessionData.end_date__c,
-            location__c: sessionData.location__c,
-            max_attendees__c: sessionData.max_attendees__c,
-            Speaker__c: sessionData.Speaker__c,
-            speaker_bio__c: sessionData.speaker_bio__c,
-            speaker_name__c: sessionData.speaker_name__c,
-            start_date__c: sessionData.start_date__c,
-            title__c: sessionData.title__c,
-            uid__c: sessionData.uid__c,
-            uid_event__c: sessionData.uid_event__c,
+            description__c: sessionData.description,
+            end_date__c: sessionData.end_date,
+            location__c: sessionData.location,
+            max_attendees__c: sessionData.max_attendees,
+            Speaker__c: sessionData.Speaker,
+            speaker_bio__c: sessionData.speaker_bio,
+            speaker_name__c: sessionData.speaker_name,
+            start_date__c: sessionData.start_date,
+            title__c: sessionData.title,
+            uid__c: sessionData.uid,
+            uid_event__c: sessionData.uid_event,
         });
       } catch (error) {
           console.error('Error in creating session:', error);
