@@ -4,13 +4,11 @@ const connectRabbitmq = require('../rabbitmq');
 
 
 async function startUserConsumer() {
-    console.log('Starting consumer...');
+    console.log('Starting user consumer');
     try{
         //connect to RabbitMQ server
         const connection = await connectRabbitmq();
-        console.log('Connected to RabbitMQ.');
         const channel =  await connection.createChannel();
-        console.log('Connected to RabbitMQ2.');
 
         //consumer message from the queue
         channel.consume(

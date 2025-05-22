@@ -3,12 +3,10 @@ const { parseStringPromise } = require('xml2js');
 const connectRabbitmq = require('../rabbitmq');
 
 async function startCompanyConsumer() {
-    console.log('Starting consumer...');
+    console.log('Starting company consumer');
     try{
         const connection = await connectRabbitmq();
-        console.log('Connected to RabbitMQ.');
         const channel =  await connection.createChannel();
-        console.log('Connected to RabbitMQ2.');
 
 
         channel.consume(
