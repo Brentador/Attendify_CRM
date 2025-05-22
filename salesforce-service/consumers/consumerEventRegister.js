@@ -24,7 +24,7 @@ async function startEventRegistrationConsumer() {
           emptyTag: null,
         });
 
-        console.log('Parsed XML:', JSON.stringify(parsed, null, 2)); // Log de parsed XML
+        console.log('Parsed XML:', JSON.stringify(parsed, null, 2)); // Log the parsed XML
 
         const operation = parsed?.attendify?.info?.operation;
         const sender = parsed?.attendify?.info?.sender;
@@ -36,7 +36,7 @@ async function startEventRegistrationConsumer() {
           return;
         }
 
-        // Gebruik de juiste namen van de velden in de XML
+        // Extract relevant fields
         const userUid = registration.uid;
         const eventUid = registration.event_id;
 
@@ -50,10 +50,11 @@ async function startEventRegistrationConsumer() {
         }
 
         const regData = {
-          user__c: userId, // Correcte naam
-          Event_crm__c: eventId // Correcte naam
+          user__c: userId, // Salesforce field name
+          Event_crm__c: eventId // Salesforce field name
         };
 
+        // Process the operation (create, update, delete)
         if (sender.toLowerCase() !== 'crm') {
           console.log(`➡️ Processing '${operation}' for Event Registration...`);
           if (operation === 'create') {
@@ -61,12 +62,13 @@ async function startEventRegistrationConsumer() {
           } else if (operation === 'update') {
             await EventRegistrationService.updateRegistration(regData);
           } else if (operation === 'delete') {
-            await EventRegistrationService.deleteRegistration(userUid,eventUid);
+            await EventRegistrationService.deleteRegistration(userUid, eventUid);
           } else {
             console.warn(`❓ Unknown operation: ${operation}`);
           }
         }
 
+        // Acknowledge the message after processing
         channel.ack(message);
         console.log('✅ Message acknowledged');
       } catch (err) {
@@ -74,7 +76,6 @@ async function startEventRegistrationConsumer() {
         channel.nack(message, false, false);
       }
     }, { noAck: false });
-
   } catch (err) {
     console.error('❌ Failed to start Event Registration Consumer:', err);
   }
