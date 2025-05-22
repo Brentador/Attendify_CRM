@@ -1,4 +1,4 @@
-const { getConnection } = require('./salesforce');
+const { getConnection } = require('../salesforce');
 
 class UserService {
     static async createUser(userData) {
@@ -37,7 +37,7 @@ class UserService {
           
           if (result) {
               const user = result[0];
-              const userToUpdate = { uid: user.uid };
+              const userToUpdate = { Id: user.Id };
               for (const [key, value] of Object.entries(userData)) {
                 if (value !== null) {
                     userToUpdate[key] = value;
