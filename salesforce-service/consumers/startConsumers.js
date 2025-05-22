@@ -1,8 +1,8 @@
-const { startUserConsumer } = require('../crud/consumerUser');
-const startEventConsumer = require('../crud/consumerEvent');
-const startSessionConsumer = require('../crud/consumerSession');
-const { startCompanyConsumer } = require('../crud/consumerCompany');
-const { startPaymentConsumer } = require('../crud/PaymentCRUDD');
+const { startUserConsumer } = require('./consumerUser');
+const startEventConsumer = require('./consumerEvent');
+const startSessionConsumer = require('./consumerSession');
+const { startCompanyConsumer } = require('./consumerCompany');
+const { startPaymentConsumer } = require('./PaymentCRUDD');
 
 async function startConsumers(){
     try {
