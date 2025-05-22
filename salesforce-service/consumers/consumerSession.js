@@ -19,8 +19,9 @@ async function startSessionConsumer() {
                 console.log('Parsed XML data:', parsedData);
 
 
-                let sessionData;
                 const operation = parsedData.attendify.info.operation;
+                let sessionData;
+                let sessionRegisterData;
                 if (operation == 'create' || operation == 'update' || operation == 'delete') {
                     const session = parsedData.attendify.session;
                     console.log('Parsed XML data:', session);
