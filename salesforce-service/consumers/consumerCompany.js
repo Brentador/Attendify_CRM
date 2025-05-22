@@ -54,7 +54,7 @@ async function startCompanyConsumer() {
                     if (operation === 'create') {
                         await CompanyCRUD.createCompany(companyData);
                     } else if (operation === 'update') {
-                        await CompanyrCRUD.updateCompany(companyData);
+                        await CompanyCRUD.updateCompany(companyData);
                     } else if (operation === 'delete') {
                         await CompanyCRUD.deleteCompany(companyData.uid__c);
                     } else if (operation === 'register') {
@@ -80,9 +80,9 @@ async function startCompanyConsumer() {
 async function stopCompanyConsumer(connection){
     try{
         await connection.close();
-        exit();
-    } catch(error){
-        exit();
+        process.exit();
+    } catch{
+        process.exit();
     }
 }
 
