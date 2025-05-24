@@ -1,31 +1,29 @@
 const UserCRUD = require('../crud/UserCRUD');
 const { parseStringPromise } = require('xml2js');
 const connectRabbitmq = require('../rabbitmq');
+const logToMonitoring = require('../logging');
 
 
 async function startUserConsumer() {
     console.log('Starting user consumer');
-    try{
-        //connect to RabbitMQ server
+    let channel;
+    try {
         const connection = await connectRabbitmq();
-        const channel =  await connection.createChannel();
+        channel = await connection.createChannel();
 
-        //consumer message from the queue
-        channel.consume(
+        await channel.consume(
             "crm.user",
             async (message) => {
                 try {
-                //get data from xml
-                const xmlData = message.content.toString();
-                const parsedData = await parseStringPromise(xmlData, { explicitArray: false });
-                console.log('Parsed XML data:', parsedData);
+                    const xmlData = message.content.toString();
+                    const parsedData = await parseStringPromise(xmlData, { explicitArray: false });
+                    console.log('Parsed XML data:', parsedData);
 
 
-                //extract data from xml
-                const operation = parsedData.attendify.info.operation;
-                const user = parsedData.attendify.user;
-                console.log('Parsed XML data:', user);
-                const userData = {
+                    const operation = parsedData.attendify.info.operation;
+                    const user = parsedData.attendify.user;
+                    console.log('Parsed XML data:', user);
+                    const userData = {
                         id: user?.id || null,
                         email__c: user.email,
                         first_name__c: user.first_name,
@@ -42,36 +40,51 @@ async function startUserConsumer() {
                         street_name__c: user.address?.street || null,
                         title__c: user.title,
                         uid__c: user.uid,
-                };
+                        admin__c: user.is_admin || false,
+                    };
 
-                if(parsedData.attendify.info.sender.toLowerCase() != "crm"){
-                    if (operation === 'create') {
-                        await UserCRUD.createUser(userData);
-                    } else if (operation === 'update') {
-                        await UserCRUD.updateUser(userData);
-                    } else if (operation === 'delete') {
-                        await UserCRUD.deleteUser(userData.uid__c);
-                    } else {
-                        console.log('Invalid operation');
+                    if (parsedData.attendify.info.sender.toLowerCase() != "crm") {
+                        let success = false;
+                        let message = "";
+
+                        switch (operation) {
+                            case 'create':
+                                success = await UserCRUD.createUser(userData);
+                                message = success ? 'User created successfully' : 'Failed to create user';
+                                logToMonitoring(message, 'user-management', channel);
+                                break;
+                            case 'update':
+                                success = await UserCRUD.updateUser(userData);
+                                message = success ? 'User updated successfully' : 'Failed to update user';
+                                logToMonitoring(message, 'user-management', channel);
+                                break;
+                            case 'delete':
+                                success = await UserCRUD.deleteUser(userData);
+                                message = success ? 'User deleted successfully' : 'Failed to delete user';
+                                logToMonitoring(message, 'user-management', channel);
+                                break;
+                            default:
+                                logToMonitoring(`Unknown operation: ${operation}`, 'user-management', channel);
+                                return;
+                        }
                     }
+                } catch (error) {
+                    logToMonitoring(`Error processing user message: ${error}`, 'user-management', channel);
+                } finally {
+                    channel.ack(message);
                 }
-            } catch (error) {
-                console.error('Error processing message:', error);
-            } finally {
-                channel.ack(message);
-            }
             }
         )
-    }catch(error){
-        console.error('Error starting consumer:', error);
+    } catch (error) {
+        logToMonitoring(`Error starting user consumer: ${error}`, 'user-management', channel);
     }
 }
 
-async function stopUserConsumer(connection){
-    try{
+async function stopUserConsumer(connection) {
+    try {
         await connection.close();
         exit();
-    } catch(error){
+    } catch (error) {
         exit();
     }
 }

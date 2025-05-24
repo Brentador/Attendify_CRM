@@ -3,7 +3,7 @@ const { getConnection } = require('../salesforce');
 const { Builder } = require('xml2js');
 const Faye = require('faye');
 const connectRabbitmq = require('../rabbitmq');
-
+const logToMonitoring = require('../logging');
 
 async function checkDeletedUsers(){
     console.log("checking deleted users");
@@ -31,10 +31,10 @@ async function checkDeletedUsers(){
             const mappedUserXML = mapXML({ uid__c: uid });
             const messageXML = builder.buildObject(mappedUserXML);
             channel.publish("user-management", "user.delete", Buffer.from(messageXML));
-            console.log(`Message sent for deleted user: ${uid}`);
+            logToMonitoring(`Delete user message sent to delete queue: ${uid}`, 'user-management', channel);
         })
     }catch (error) {
-        console.error('Error in delete producer:', error);
+        logToMonitoring(`Error in user delete producer: ${error.message}`, 'user-management', channel);
     }
 }
 

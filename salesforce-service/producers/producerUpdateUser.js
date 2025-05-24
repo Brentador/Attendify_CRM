@@ -3,6 +3,7 @@ const { Builder } = require('xml2js');
 const { getConnection } = require('../salesforce');
 const Faye = require('faye');
 const connectRabbitmq = require('../rabbitmq');
+const logToMonitoring = require('../logging');
 
 async function checkUpdatedUsers() {
     console.log("checking updated users");
@@ -29,10 +30,11 @@ async function checkUpdatedUsers() {
                 const messageXML = builder.buildObject(mappedUserXML);
                 console.log('Message XML:', messageXML);
                 channel.publish("user-management", "user.update", Buffer.from(messageXML));
-                console.log(`Message sent for updated user: ${user}`);
+                logToMonitoring(`Update user message sent to queue: ${user.email__c}`, 'user-management', channel);
         })
+        
     } catch (error) {
-        console.error('Error in producer:', error);
+        logToMonitoring(`Error in user update producer: ${error.message}`, 'user-management', channel);
     }
 }
 

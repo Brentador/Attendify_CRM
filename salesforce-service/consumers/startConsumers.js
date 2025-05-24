@@ -4,7 +4,7 @@ const startSessionConsumer = require('./consumerSession');
 const { startCompanyConsumer } = require('./consumerCompany');
 const startPaymentConsumer = require('./consumerPayment');
 
-async function startConsumers(){
+async function startConsumers() {
     try {
         console.log('Starting all consumers...');
         await startUserConsumer();

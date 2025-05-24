@@ -4,6 +4,8 @@ const { getConnection } = require('../salesforce');
 const bcrypt = require("bcryptjs");
 const Faye = require('faye');
 const connectRabbitmq = require('../rabbitmq');
+const logToMonitoring = require('../logging');
+
 
 
 async function checkCreatedUsers() {
@@ -32,9 +34,10 @@ async function checkCreatedUsers() {
                 const hashedPassword = await createPassword(plainTextPassword);
                 const userMessage = builder.buildObject(mapXML(user, hashedPassword));
                 channel.publish("user-management", "user.register", Buffer.from(userMessage));
+                logToMonitoring(`Create use message sent to queue: ${user.email__c}`, 'user-management', channel);
             });
     } catch (error) {
-        console.error('Error in producer:', error);
+        logToMonitoring(`Error in user create producer: ${error.message}`, 'user-management', channel);
     }
 }
 
