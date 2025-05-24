@@ -3,9 +3,12 @@ const { Builder } = require('xml2js');
 async function logToMonitoring(message, exchange, channel) {
     const routingKey = 'monitoring.log';
     const logMessage = {
-        sender: 'crm',
-        timestamp: new Date().toISOString(),
-        message: message
+        attendify: {
+            sender: 'crm',
+            timestamp: new Date().toISOString(),
+            message: message
+        },
+        
     };
 
     const builder = new Builder();
