@@ -6,7 +6,7 @@ COPY indexProducers.js ./
 RUN mkdir -p salesforce-service/producers
 RUN mkdir -p salesforce-service/crud
 COPY tests/integration/UserProducer.test.js ./tests/integration/
-COPY salesforce-service/salesforce.js salesforce-service/heartbeat.js salesforce-service/rabbitmq.js ./salesforce-service 
+COPY salesforce-service/logging.js salesforce-service/salesforce.js salesforce-service/heartbeat.js salesforce-service/rabbitmq.js ./salesforce-service 
 COPY salesforce-service/producers ./salesforce-service/producers
 COPY salesforce-service/crud ./salesforce-service/crud
 CMD ["npm", "run", "produce"]

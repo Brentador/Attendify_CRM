@@ -1,30 +1,32 @@
 const CompanyCRUD = require('../crud/CompanyCRUD');
 const { parseStringPromise } = require('xml2js');
 const connectRabbitmq = require('../rabbitmq');
+const logToMonitoring = require('../logging');
 
 async function startCompanyConsumer() {
     console.log('Starting company consumer');
-    try{
+    let channel;
+    try {
         const connection = await connectRabbitmq();
-        const channel =  await connection.createChannel();
+        channel = await connection.createChannel();
 
 
-        channel.consume(
+        await channel.consume(
             "crm.company",
             async (message) => {
                 try {
-                const xmlData = message.content.toString();
-                const parsedData = await parseStringPromise(xmlData, { explicitArray: false });
-                console.log('Parsed XML data:', parsedData);
+                    const xmlData = message.content.toString();
+                    const parsedData = await parseStringPromise(xmlData, { explicitArray: false });
+                    console.log('Parsed XML data:', parsedData);
 
 
-                const operation = parsedData.attendify.info.operation;
-                let companyData;
-                let companyRegisterData;
-                if (operation == 'create' || operation == 'update' || operation == 'delete') {
-                    const company = parsedData.attendify.company;
-                    console.log('Parsed XML data:', company);
-                    companyData = {
+                    const operation = parsedData.attendify.info.operation;
+                    let companyData;
+                    let companyRegisterData;
+                    if (operation == 'create' || operation == 'update' || operation == 'delete') {
+                        const company = parsedData.attendify.companies.company;
+                        console.log('Parsed XML data:', company);
+                        companyData = {
                             b_city__c: company.billingAddress?.city || null,
                             b_number__c: company.billingAddress?.number || null,
                             b_postcode__c: company.billingAddress?.postcode || null,
@@ -38,50 +40,69 @@ async function startCompanyConsumer() {
                             postcode__c: company.address?.postcode || null,
                             street__c: company.address?.street || null,
                             uid__c: company.uid,
-                            VATNumber__c: company.VATNumber || null,
-                    };
-                } else if (operation == 'register' || operation == 'unregister') {
-                    const companyRegister = parsedData.attendify.company_employee;
-                    console.log('Parsed XML data:', companyRegister);
-                    companyRegisterData = {
-                        company_uid__c: companyRegister.company_id,
-                        user_uid__c: companyRegister.uid
-                    };
-                }
-                if(parsedData.attendify.info.sender.toLowerCase() != "crm"){
-                    if (operation === 'create') {
-                        await CompanyCRUD.createCompany(companyData);
-                    } else if (operation === 'update') {
-                        await CompanyCRUD.updateCompany(companyData);
-                    } else if (operation === 'delete') {
-                        await CompanyCRUD.deleteCompany(companyData.uid__c);
-                    } else if (operation === 'register') {
-                        await CompanyCRUD.registerCompany(companyRegisterData);
-                    } else if (operation === 'unregister') {
-                        await CompanyCRUD.unregisterCompany(companyRegisterData);
-                    } else {
-                        console.log('Invalid operation');
+                            VATNumber__c: company.VATNumber
+                        };
+                    } else if (operation == 'register' || operation == 'unregister') {
+                        const companyRegister = parsedData.attendify.company_employee;
+                        console.log('Parsed XML data:', companyRegister);
+                        companyRegisterData = {
+                            company_uid__c: companyRegister.company_id,
+                            user_uid__c: companyRegister.uid
+                        };
                     }
+                    if (parsedData.attendify.info.sender.toLowerCase() != "crm") {
+                        let success = false;
+                        let message = "";
+
+                        switch (operation) {
+                            case 'create':
+                                success = await CompanyCRUD.createCompany(companyData);
+                                message = success ? 'Company created successfully' : 'Failed to create company';
+                                logToMonitoring(message, 'company', channel);
+                                break;
+                            case 'update':
+                                success = await CompanyCRUD.updateCompany(companyData);
+                                message = success ? 'Company updated successfully' : 'Failed to update company';
+                                logToMonitoring(message, 'company', channel);
+                                break;
+                            case 'delete':
+                                success = await CompanyCRUD.deleteCompany(companyData.uid__c);
+                                message = success ? 'Company deleted successfully' : 'Failed to delete company';
+                                logToMonitoring(message, 'company', channel);
+                                break;
+                            case 'register':
+                                success = await CompanyCRUD.registerCompanyEmployee(companyRegisterData);
+                                message = success ? 'Company employee registered successfully' : 'Failed to register company employee';
+                                logToMonitoring(message, 'company', channel);
+                                break;
+                            case 'unregister':
+                                success = await CompanyCRUD.unregisterCompanyEmployee(companyRegisterData);
+                                message = success ? 'Company employee unregistered successfully' : 'Failed to unregister company employee';
+                                logToMonitoring(message, 'company', channel);
+                                break;
+                            default:
+                                logToMonitoring(`Unknown operation: ${operation}`, 'company', channel);
+                                return;
+                        }
+                    }
+                } catch (error) {
+                    logToMonitoring(`Error processing company message: ${error}`, 'company', channel);
+                } finally {
+                    channel.ack(message);
                 }
-            } catch (error) {
-                console.error('Error processing message:', error);
-            } finally {
-                channel.ack(message);
-            }
             }
         )
-    }catch(error){
-        console.error('Error starting consumer:', error);
+    } catch (error) {
+        logToMonitoring(`Error starting company consumer: ${error}`, 'company', channel);
     }
 }
 
-async function stopCompanyConsumer(connection){
-    try{
+async function stopCompanyConsumer(connection) {
+    try {
         await connection.close();
-        process.exit();
+        exit();
     } catch (error) {
-        console.error('Error closing connection:', error);
-        process.exit();
+        exit();
     }
 }
 
