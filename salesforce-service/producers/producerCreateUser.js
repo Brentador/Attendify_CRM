@@ -34,7 +34,7 @@ async function checkCreatedUsers() {
                 const hashedPassword = await createPassword(plainTextPassword);
                 const userMessage = builder.buildObject(mapXML(user, hashedPassword));
                 channel.publish("user-management", "user.register", Buffer.from(userMessage));
-                logToMonitoring(`Create use message sent to queue: ${user.email__c}`, 'user-management', channel);
+                logToMonitoring(`Create use message sent to queue`, 'user-management', channel);
             });
     } catch (error) {
         logToMonitoring(`Error in user create producer: ${error.message}`, 'user-management', channel);

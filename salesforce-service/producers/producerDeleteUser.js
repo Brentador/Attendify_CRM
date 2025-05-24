@@ -31,7 +31,7 @@ async function checkDeletedUsers(){
             const mappedUserXML = mapXML({ uid__c: uid });
             const messageXML = builder.buildObject(mappedUserXML);
             channel.publish("user-management", "user.delete", Buffer.from(messageXML));
-            logToMonitoring(`Delete user message sent to delete queue: ${uid}`, 'user-management', channel);
+            logToMonitoring(`Delete user message sent to delete queue`, 'user-management', channel);
         })
     }catch (error) {
         logToMonitoring(`Error in user delete producer: ${error.message}`, 'user-management', channel);

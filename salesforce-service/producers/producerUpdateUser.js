@@ -30,7 +30,7 @@ async function checkUpdatedUsers() {
                 const messageXML = builder.buildObject(mappedUserXML);
                 console.log('Message XML:', messageXML);
                 channel.publish("user-management", "user.update", Buffer.from(messageXML));
-                logToMonitoring(`Update user message sent to queue: ${user.email__c}`, 'user-management', channel);
+                logToMonitoring(`Update user message sent to queue`, 'user-management', channel);
         })
         
     } catch (error) {
